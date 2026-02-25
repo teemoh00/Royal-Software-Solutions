@@ -1,11 +1,57 @@
+import React, { useState } from 'react'
 import { ArrowRight, CheckCircle, Database, Server, Shield, Globe, Cpu, BarChart, Users, BookOpen, Truck, Building, Activity, Briefcase } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
+const erpFeatures = [
+    {
+        id: 'student-info',
+        title: 'Student Information Management',
+        description: 'Maintain comprehensive digital records of all students including personal details, academic history, disciplinary records, health information, and family contacts in a secure, centralized database. Enables powerful search, custom reporting, and automated document generation for quick access to student files.'
+    },
+    {
+        id: 'academic-perf',
+        title: 'Academic Performance Tracking',
+        description: 'Monitor student progress over time with detailed analytics, continuous assessment tracking, and automated generation of insightful performance reports and transcripts. Identify learning gaps early with predictive analytics and easily share performance dashboards with parents.'
+    },
+    {
+        id: 'curriculum',
+        title: 'CBC, KCSE, IGCSE Aligned',
+        description: 'Fully customized to support multiple curriculum standards simultaneously, ensuring seamless compliance with local and international educational grading systems. Built-in rubrics and competency tracking for CBC, along with standardized reporting for 8-4-4 and IGCSE.'
+    },
+    {
+        id: 'payment',
+        title: 'Bank & M-Pesa Integration',
+        description: 'Automate fee collection and reconciliation with direct integrations to major banks and mobile money platforms (M-Pesa) for instant payment reflection. Dramatically reduces manual data entry, helps track defaulters automatically, and sends instant SMS receipts to parents upon payment.'
+    },
+    {
+        id: 'timetable',
+        title: 'Timetable & Exam Systems',
+        description: 'Intelligently generate clash-free timetables considering teacher availability and room capacities. Manage exam scheduling, seating arrangements, securely process examination results, and calculate complex weighted averages effortlessly.'
+    },
+    {
+        id: 'finance',
+        title: 'Finance & Core Accounting',
+        description: 'A complete financial management suite tailored for educational institutions. Handle complex fee structures, generate invoices, track departmental expenses, manage budgets, and produce comprehensive financial reporting like income statements and balance sheets.'
+    },
+    {
+        id: 'hr',
+        title: 'HR & Payroll Management',
+        description: 'Digitize your entire staff management workflow. Handle employee records, monitor daily attendance, process leave applications online, and automate complex payroll processing including all statutory deductions (PAYE, NHIF, NSSF) and tax compliance.'
+    },
+    {
+        id: 'portals',
+        title: 'Parent & Teacher Portals',
+        description: 'Provide dedicated, secure interfaces for parents and teachers. Parents can track their child\'s progress, view report cards, and check fee balances. Teachers can efficiently manage grading, record attendance, issue assignments, and communicate securely with parents.'
+    }
+];
+
 const ProductsServices = () => {
+    const [activeFeature, setActiveFeature] = useState(erpFeatures[0]);
+
     return (
         <div className="products-services-page">
             {/* 1. Page Hero Section */}
-            <section className="products-hero">
+            <section className="corporate-hero">
                 <div className="stars-container">
                     <div className="stars-sm"></div>
                     <div className="stars-md"></div>
@@ -13,16 +59,19 @@ const ProductsServices = () => {
                 </div>
                 <div className="container hero-container">
                     <div className="hero-content text-center">
-                        <h1 className="hero-title animate-fade-in-up">Innovative Software Solutions Built for Growth</h1>
-                        <p className="hero-subtitle animate-fade-in-up delay-100">
+                        <div className="corporate-badge animate-fade-in-up">Enterprise Software Ecosystem</div>
+                        <h1 className="hero-title animate-fade-in-up delay-100">
+                            Innovative Solutions Built <br /><span className="text-secondary">for Unstoppable Growth</span>
+                        </h1>
+                        <p className="hero-subtitle animate-fade-in-up delay-200">
                             From Academic ERPs to Enterprise Platforms, Royal Software Solutions delivers research-driven, scalable technology systems designed for African institutions and businesses.
                         </p>
-                        <div className="hero-buttons animate-fade-in-up delay-200">
+                        <div className="hero-buttons animate-fade-in-up delay-300">
                             <Link to="/get-quote" className="btn btn-primary">
                                 Get a Quote <ArrowRight size={18} />
                             </Link>
                             <a href="#fahari" className="btn btn-outline">
-                                Explore FAHARI Ecosystem
+                                Explore FAHARI <Activity size={18} />
                             </a>
                         </div>
                     </div>
@@ -31,35 +80,42 @@ const ProductsServices = () => {
             </section>
 
             {/* 2. School Management Systems */}
-            <section id="academic-erp" className="section academic-erp">
+            <section id="academic-erp" className="section corporate-academic-erp bg-light">
                 <div className="container">
-                    <div className="section-header">
-                        <h2 className="section-title">Academic ERP & School Management Systems</h2>
+                    <div className="section-header text-center">
+                        <h2 className="section-title">Academic ERP & School Management</h2>
                         <p className="section-subtitle">
-                            Comprehensive digital platforms for primary, secondary, and tertiary education institutions designed to streamline academic and administrative operations.
+                            Comprehensive digital platforms designed to streamline academic and administrative operations.
                         </p>
                     </div>
-                    <div className="erp-grid">
+                    <div className="corporate-erp-container">
                         <div className="erp-content">
-                            <ul className="feature-list">
-                                <li><CheckCircle size={20} className="icon-check" /> Student Information Management</li>
-                                <li><CheckCircle size={20} className="icon-check" /> Academic Performance Tracking</li>
-                                <li><CheckCircle size={20} className="icon-check" /> CBC, KCSE, IGCSE aligned tracking</li>
-                                <li><CheckCircle size={20} className="icon-check" /> Fee Management with Bank & M-Pesa integration</li>
-                                <li><CheckCircle size={20} className="icon-check" /> Timetable & Examination Management</li>
-                                <li><CheckCircle size={20} className="icon-check" /> Finance & Core Accounting</li>
-                                <li><CheckCircle size={20} className="icon-check" /> Human Resource & Payroll Management</li>
-                                <li><CheckCircle size={20} className="icon-check" /> Parent & Teacher Portals</li>
+                            <ul className="corporate-feature-list interactive-list">
+                                {erpFeatures.map(feature => (
+                                    <li
+                                        key={feature.id}
+                                        className={`corporate-feature-item ${activeFeature.id === feature.id ? 'active' : ''}`}
+                                        onClick={() => setActiveFeature(feature)}
+                                    >
+                                        <CheckCircle size={20} className="icon-check text-secondary" />
+                                        <span>{feature.title}</span>
+                                    </li>
+                                ))}
                             </ul>
-                            <div className="erp-cta">
-                                <Link to="/get-quote" className="btn btn-primary">Request School Demo</Link>
+                            <div className="erp-cta mt-4">
+                                <Link to="/get-quote" className="btn btn-secondary">Request School Demo</Link>
                             </div>
                         </div>
                         <div className="erp-visual">
-                            {/* Placeholder for illustration */}
-                            <div className="visual-placeholder">
-                                <BookOpen size={64} className="visual-icon" />
-                                <span>Academic Excellence</span>
+                            <div className="corporate-details-panel">
+                                <div key={activeFeature.id} className="feature-details-card">
+                                    <div className="feature-icon-header">
+                                        <CheckCircle size={32} className="text-secondary mb-3" />
+                                    </div>
+                                    <h3 className="feature-title-large">{activeFeature.title}</h3>
+                                    <div className="feature-divider"></div>
+                                    <p className="feature-description-large">{activeFeature.description}</p>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -67,177 +123,207 @@ const ProductsServices = () => {
             </section>
 
             {/* 3. Custom Software Development */}
-            <section className="section custom-dev bg-neutral">
+            <section className="section custom-dev bg-white">
                 <div className="container">
-                    <div className="section-header">
+                    <div className="section-header text-center">
                         <h2 className="section-title">Custom Software Development</h2>
                         <p className="section-subtitle">
                             We design and develop tailored software systems for businesses and institutions across industries.
                         </p>
                     </div>
-                    <div className="services-grid-3">
-                        <div className="service-card">
-                            <Database size={32} className="service-icon" />
+                    <div className="corporate-services-grid">
+                        <div className="corporate-card">
+                            <div className="corporate-icon-wrapper">
+                                <Database size={32} className="corporate-icon text-primary" />
+                            </div>
                             <h3>ERP Systems</h3>
                             <p>For All Industries</p>
                         </div>
-                        <div className="service-card">
-                            <Activity size={32} className="service-icon" />
+                        <div className="corporate-card">
+                            <div className="corporate-icon-wrapper">
+                                <Activity size={32} className="corporate-icon text-primary" />
+                            </div>
                             <h3>Point of Sale (POS)</h3>
                             <p>Retail & Wholesale Systems</p>
                         </div>
-                        <div className="service-card">
-                            <Server size={32} className="service-icon" />
+                        <div className="corporate-card">
+                            <div className="corporate-icon-wrapper">
+                                <Server size={32} className="corporate-icon text-primary" />
+                            </div>
                             <h3>Inventory Management</h3>
                             <p>Stock & Supply Chain</p>
                         </div>
-                        <div className="service-card">
-                            <BarChart size={32} className="service-icon" />
+                        <div className="corporate-card">
+                            <div className="corporate-icon-wrapper">
+                                <BarChart size={32} className="corporate-icon text-primary" />
+                            </div>
                             <h3>Financial & Accounting</h3>
                             <p>Core Finance Systems</p>
                         </div>
-                        <div className="service-card">
-                            <Globe size={32} className="service-icon" />
+                        <div className="corporate-card">
+                            <div className="corporate-icon-wrapper">
+                                <Globe size={32} className="corporate-icon text-primary" />
+                            </div>
                             <h3>Web & Mobile Apps</h3>
                             <p>iOS, Android & Hybrid</p>
                         </div>
-                        <div className="service-card">
-                            <Users size={32} className="service-icon" />
+                        <div className="corporate-card">
+                            <div className="corporate-icon-wrapper">
+                                <Users size={32} className="corporate-icon text-primary" />
+                            </div>
                             <h3>CRM Systems</h3>
                             <p>Customer Relationship Management</p>
                         </div>
                     </div>
-                    <div className="section-cta text-center mt-4">
-                        <Link to="/get-quote" className="btn btn-secondary">Discuss Your Project</Link>
+                    <div className="section-cta text-center mt-5">
+                        <Link to="/get-quote" className="btn btn-primary">Discuss Your Project</Link>
                     </div>
                 </div>
             </section>
 
             {/* 4. IT Consulting */}
-            <section className="section it-consulting">
-                <div className="container">
-                    <div className="section-header">
-                        <h2 className="section-title">IT Consulting & Digital Transformation</h2>
-                        <p className="section-subtitle">
+            <section className="section it-consulting animated-gradient-bg">
+                <div className="container relative z-2">
+                    <div className="section-header text-center">
+                        <h2 className="section-title text-white">IT Consulting & Digital Transformation</h2>
+                        <p className="section-subtitle text-white-80">
                             We guide institutions through technology modernization and operational optimization.
                         </p>
                     </div>
-                    <div className="consulting-list">
-                        <div className="consulting-item">
-                            <Activity size={24} className="consulting-icon" />
-                            <span>System Analysis</span>
-                        </div>
-                        <div className="consulting-item">
-                            <BarChart size={24} className="consulting-icon" />
-                            <span>Business Process Optimization</span>
-                        </div>
-                        <div className="consulting-item">
-                            <Cpu size={24} className="consulting-icon" />
-                            <span>Software Deployment & Training</span>
-                        </div>
-                        <div className="consulting-item">
-                            <Database size={24} className="consulting-icon" />
-                            <span>Data Migration</span>
-                        </div>
-                        <div className="consulting-item">
-                            <Shield size={24} className="consulting-icon" />
-                            <span>Technology Advisory Services</span>
+
+                    <div className="corporate-pathway">
+                        <div className="corporate-pathway-line"></div>
+                        <div className="corporate-pathway-list">
+                            <div className="corporate-node">
+                                <div className="corporate-node-icon">
+                                    <Activity size={24} />
+                                </div>
+                                <span>System Analysis</span>
+                            </div>
+                            <div className="corporate-node">
+                                <div className="corporate-node-icon">
+                                    <BarChart size={24} />
+                                </div>
+                                <span>Process Optimization</span>
+                            </div>
+                            <div className="corporate-node">
+                                <div className="corporate-node-icon">
+                                    <Cpu size={24} />
+                                </div>
+                                <span>Tech Strategy</span>
+                            </div>
+                            <div className="corporate-node">
+                                <div className="corporate-node-icon">
+                                    <Shield size={24} />
+                                </div>
+                                <span>Security Audits</span>
+                            </div>
                         </div>
                     </div>
-                    <div className="text-center mt-4">
-                        <Link to="/get-quote" className="btn btn-outline">Book a Consultation</Link>
+
+                    <div className="text-center mt-5">
+                        <Link to="/get-quote" className="btn btn-cyber-outline">Book a Consultation</Link>
                     </div>
                 </div>
             </section>
 
             {/* 5. FAHARI Ecosystem (Flagship) */}
-            <section id="fahari" className="section fahari-ecosystem">
+            <section id="fahari" className="section corporate-ecosystem bg-white">
                 <div className="container">
-                    <div className="section-header">
-                        <h2 className="section-title text-white">FAHARI – The Unified SaaS Ecosystem</h2>
-                        <p className="section-subtitle text-white-opacity">
+                    <div className="section-header text-center">
+                        <div className="corporate-badge animate-fade-in-up">Platform Flagship</div>
+                        <h2 className="section-title animate-fade-in-up delay-100">FAHARI – The Unified SaaS Ecosystem</h2>
+                        <p className="section-subtitle animate-fade-in-up delay-200">
                             FAHARI is a modular, cloud-based software ecosystem built by Royal Software Solutions to integrate core business and institutional functions into seamless digital platforms.
                         </p>
                     </div>
 
-                    <div className="fahari-suite">
-                        {/* Education Solutions */}
-                        <div className="suite-cluster">
-                            <h3 className="cluster-title">Education Solutions</h3>
-                            <div className="suite-grid">
-                                <div className="suite-card">
-                                    <h4>Fahari Academia</h4>
-                                    <p>Primary & Secondary School Management</p>
+                    <div className="corporate-architecture-wrapper">
+                        <div className="corporate-suite-grid">
+                            {/* Education Solutions */}
+                            <div className="corporate-cluster">
+                                <div className="cluster-header bg-primary text-white">
+                                    <h3 className="cluster-title">Education Solutions</h3>
                                 </div>
-                                <div className="suite-card">
-                                    <h4>Fahari Campus</h4>
-                                    <p>Tertiary & University Management</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Enterprise Solutions */}
-                        <div className="suite-cluster">
-                            <h3 className="cluster-title">Enterprise Solutions</h3>
-                            <div className="suite-grid">
-                                <div className="suite-card">
-                                    <h4>Fahari Salesforce</h4>
-                                    <p>POS, Sales & Inventory</p>
-                                </div>
-                                <div className="suite-card">
-                                    <h4>Fahari Financials</h4>
-                                    <p>Accounting & Financial Management</p>
-                                </div>
-                                <div className="suite-card">
-                                    <h4>Fahari Workforce</h4>
-                                    <p>Human Resource & Payroll</p>
-                                </div>
-                                <div className="suite-card">
-                                    <h4>Fahari Connect</h4>
-                                    <p>Customer Relationship Management</p>
-                                </div>
-                                <div className="suite-card">
-                                    <h4>Fahari Flow</h4>
-                                    <p>Supply Chain Management</p>
-                                </div>
-                                <div className="suite-card">
-                                    <h4>Fahari Zenith</h4>
-                                    <p>Business Intelligence & Analytics</p>
-                                </div>
-                                <div className="suite-card">
-                                    <h4>Fahari Vault</h4>
-                                    <p>Secure Document & Data Management</p>
+                                <div className="cluster-body">
+                                    <div className="corporate-suite-card">
+                                        <h4>Fahari Academia</h4>
+                                        <p>Primary & Secondary School Management</p>
+                                    </div>
+                                    <div className="corporate-suite-card">
+                                        <h4>Fahari Campus</h4>
+                                        <p>Tertiary & University Management</p>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        {/* Industry Solutions */}
-                        <div className="suite-cluster">
-                            <h3 className="cluster-title">Industry Solutions</h3>
-                            <div className="suite-grid">
-                                <div className="suite-card">
-                                    <h4>Fahari Hospitality</h4>
-                                    <p>Hotel & Reservation Systems</p>
+                            {/* Enterprise Solutions */}
+                            <div className="corporate-cluster">
+                                <div className="cluster-header bg-secondary text-white">
+                                    <h3 className="cluster-title">Enterprise Solutions</h3>
                                 </div>
-                                <div className="suite-card">
-                                    <h4>Fahari Industrial</h4>
-                                    <p>Manufacturing ERP</p>
+                                <div className="cluster-body">
+                                    <div className="corporate-suite-card">
+                                        <h4>Fahari Salesforce</h4>
+                                        <p>POS, Sales & Inventory</p>
+                                    </div>
+                                    <div className="corporate-suite-card">
+                                        <h4>Fahari Financials</h4>
+                                        <p>Accounting & Financial Management</p>
+                                    </div>
+                                    <div className="corporate-suite-card">
+                                        <h4>Fahari Workforce</h4>
+                                        <p>Human Resource & Payroll</p>
+                                    </div>
+                                    <div className="corporate-suite-card">
+                                        <h4>Fahari Connect</h4>
+                                        <p>Customer Relationship Management</p>
+                                    </div>
+                                    <div className="corporate-suite-card">
+                                        <h4>Fahari Flow</h4>
+                                        <p>Supply Chain Management</p>
+                                    </div>
+                                    <div className="corporate-suite-card">
+                                        <h4>Fahari Zenith</h4>
+                                        <p>Business Intelligence & Analytics</p>
+                                    </div>
+                                    <div className="corporate-suite-card">
+                                        <h4>Fahari Vault</h4>
+                                        <p>Secure Document & Data Management</p>
+                                    </div>
                                 </div>
-                                <div className="suite-card">
-                                    <h4>Fahari Transporter</h4>
-                                    <p>Logistics & Fleet Management</p>
+                            </div>
+
+                            {/* Industry Solutions */}
+                            <div className="corporate-cluster">
+                                <div className="cluster-header bg-dark text-white">
+                                    <h3 className="cluster-title">Industry Solutions</h3>
                                 </div>
-                                <div className="suite-card">
-                                    <h4>Fahari Construct</h4>
-                                    <p>Construction Project Management</p>
-                                </div>
-                                <div className="suite-card">
-                                    <h4>Fahari Care</h4>
-                                    <p>Healthcare Management Systems</p>
-                                </div>
-                                <div className="suite-card">
-                                    <h4>Fahari Aid</h4>
-                                    <p>NGO & Donor Management Systems</p>
+                                <div className="cluster-body">
+                                    <div className="corporate-suite-card">
+                                        <h4>Fahari Hospitality</h4>
+                                        <p>Hotel & Reservation Systems</p>
+                                    </div>
+                                    <div className="corporate-suite-card">
+                                        <h4>Fahari Industrial</h4>
+                                        <p>Manufacturing ERP</p>
+                                    </div>
+                                    <div className="corporate-suite-card">
+                                        <h4>Fahari Transporter</h4>
+                                        <p>Logistics & Fleet Management</p>
+                                    </div>
+                                    <div className="corporate-suite-card">
+                                        <h4>Fahari Construct</h4>
+                                        <p>Construction Project Management</p>
+                                    </div>
+                                    <div className="corporate-suite-card">
+                                        <h4>Fahari Care</h4>
+                                        <p>Healthcare Management Systems</p>
+                                    </div>
+                                    <div className="corporate-suite-card">
+                                        <h4>Fahari Aid</h4>
+                                        <p>NGO & Donor Management Systems</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -246,83 +332,116 @@ const ProductsServices = () => {
             </section>
 
             {/* 6. Platform Architecture */}
-            <section className="section architecture bg-neutral">
+            <section className="section corporate-architecture bg-light">
                 <div className="container">
-                    <div className="section-header">
-                        <h2 className="section-title">Built on a Secure & Scalable Architecture</h2>
+                    <div className="section-header text-center">
+                        <h2 className="section-title">Secure & Scalable Architecture</h2>
                         <p className="section-subtitle">
                             FAHARI is designed as a modular SaaS ecosystem built on a shared core infrastructure.
                         </p>
                     </div>
-                    <div className="architecture-grid">
-                        <div className="arch-item">
-                            <Shield className="arch-icon" />
-                            <span>Unified Authentication</span>
+                    <div className="corporate-arch-grid">
+                        <div className="corporate-arch-node">
+                            <div className="corporate-arch-icon-wrapper">
+                                <Shield className="corporate-arch-icon text-primary" />
+                            </div>
+                            <span>Unified Auth</span>
                         </div>
-                        <div className="arch-item">
-                            <Users className="arch-icon" />
-                            <span>Role-Based Access Control</span>
+                        <div className="corporate-arch-node">
+                            <div className="corporate-arch-icon-wrapper">
+                                <Users className="corporate-arch-icon text-primary" />
+                            </div>
+                            <span>RBAC</span>
                         </div>
-                        <div className="arch-item">
-                            <Activity className="arch-icon" />
-                            <span>Centralized Billing Engine</span>
+                        <div className="corporate-arch-node">
+                            <div className="corporate-arch-icon-wrapper">
+                                <Activity className="corporate-arch-icon text-primary" />
+                            </div>
+                            <span>Integration API</span>
                         </div>
-                        <div className="arch-item">
-                            <Globe className="arch-icon" />
-                            <span>Cloud Deployment</span>
+                        <div className="corporate-arch-node">
+                            <div className="corporate-arch-icon-wrapper">
+                                <Database className="corporate-arch-icon text-primary" />
+                            </div>
+                            <span>Data Lake</span>
                         </div>
-                        <div className="arch-item">
-                            <Server className="arch-icon" />
-                            <span>API-Driven Integration</span>
+                        <div className="corporate-arch-node">
+                            <div className="corporate-arch-icon-wrapper">
+                                <Activity className="corporate-arch-icon text-primary" />
+                            </div>
+                            <span>Analytics Engine</span>
                         </div>
-                        <div className="arch-item">
-                            <Database className="arch-icon" />
-                            <span>Data Security & Encryption</span>
+                        <div className="corporate-arch-node">
+                            <div className="corporate-arch-icon-wrapper">
+                                <Shield className="corporate-arch-icon text-primary" />
+                            </div>
+                            <span>Cloud Backup</span>
                         </div>
                     </div>
-                    <p className="text-center mt-4 font-semibold text-primary">
-                        This architecture ensures scalability, interoperability, and long-term sustainability.
-                    </p>
+
+                    <div className="corporate-base-plate mt-5">
+                        <div className="corporate-base-glow"></div>
+                        <p className="corporate-base-text">Enterprise Cloud Infrastructure</p>
+                    </div>
                 </div>
             </section>
 
             {/* 7. Industries We Serve */}
-            <section className="section industries">
+            <section className="section corporate-industries bg-white">
                 <div className="container">
-                    <div className="section-header">
-                        <h2 className="section-title">Industries We Serve</h2>
+                    <div className="section-header text-center">
+                        <h2 className="section-title animate-fade-in-up">Industries We Serve</h2>
+                        <p className="section-subtitle animate-fade-in-up delay-100">
+                            Delivering specialized technological solutions across multiple sectors.
+                        </p>
                     </div>
-                    <div className="industries-grid">
-                        <div className="industry-card">
-                            <BookOpen className="industry-icon" />
+                    <div className="corporate-industries-grid">
+                        <div className="corporate-industry-card animate-fade-in-up delay-100">
+                            <div className="corporate-industry-icon-wrapper">
+                                <BookOpen className="corporate-industry-icon" />
+                            </div>
                             <span>Education</span>
                         </div>
-                        <div className="industry-card">
-                            <Users className="industry-icon" />
+                        <div className="corporate-industry-card animate-fade-in-up delay-200">
+                            <div className="corporate-industry-icon-wrapper">
+                                <Users className="corporate-industry-icon" />
+                            </div>
                             <span>Retail & Commerce</span>
                         </div>
-                        <div className="industry-card">
-                            <Activity className="industry-icon" />
+                        <div className="corporate-industry-card animate-fade-in-up delay-300">
+                            <div className="corporate-industry-icon-wrapper">
+                                <Activity className="corporate-industry-icon" />
+                            </div>
                             <span>Healthcare</span>
                         </div>
-                        <div className="industry-card">
-                            <Cpu className="industry-icon" />
+                        <div className="corporate-industry-card animate-fade-in-up delay-100">
+                            <div className="corporate-industry-icon-wrapper">
+                                <Cpu className="corporate-industry-icon" />
+                            </div>
                             <span>Manufacturing</span>
                         </div>
-                        <div className="industry-card">
-                            <Truck className="industry-icon" />
+                        <div className="corporate-industry-card animate-fade-in-up delay-200">
+                            <div className="corporate-industry-icon-wrapper">
+                                <Truck className="corporate-industry-icon" />
+                            </div>
                             <span>Logistics</span>
                         </div>
-                        <div className="industry-card">
-                            <Building className="industry-icon" />
+                        <div className="corporate-industry-card animate-fade-in-up delay-300">
+                            <div className="corporate-industry-icon-wrapper">
+                                <Building className="corporate-industry-icon" />
+                            </div>
                             <span>Construction</span>
                         </div>
-                        <div className="industry-card">
-                            <Globe className="industry-icon" />
+                        <div className="corporate-industry-card animate-fade-in-up delay-100">
+                            <div className="corporate-industry-icon-wrapper">
+                                <Globe className="corporate-industry-icon" />
+                            </div>
                             <span>NGOs</span>
                         </div>
-                        <div className="industry-card">
-                            <Briefcase className="industry-icon" />
+                        <div className="corporate-industry-card animate-fade-in-up delay-200">
+                            <div className="corporate-industry-icon-wrapper">
+                                <Briefcase className="corporate-industry-icon" />
+                            </div>
                             <span>Hospitality</span>
                         </div>
                     </div>
@@ -330,11 +449,12 @@ const ProductsServices = () => {
             </section>
 
             {/* 8. Call to Action */}
-            <section className="section cta-banner">
-                <div className="container text-center">
-                    <h2 className="cta-title">Ready to transform your institution or enterprise?</h2>
-                    <p className="cta-subtitle">Let us design a scalable solution tailored to your needs.</p>
-                    <Link to="/get-quote" className="btn btn-white">Get a free Quote</Link>
+            <section className="section corporate-cta-banner">
+                <div className="corporate-cta-overlay"></div>
+                <div className="container text-center relative z-2">
+                    <h2 className="corporate-cta-title">Ready to transform your institution or enterprise?</h2>
+                    <p className="corporate-cta-subtitle">Let us design a scalable, secure digital solution tailored to your operational needs.</p>
+                    <Link to="/get-quote" className="btn btn-primary mt-4">Get a Free Quote</Link>
                 </div>
             </section>
         </div>

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { CheckCircle, Shield, Server, Users, Mail, Phone, Globe } from 'lucide-react'
+import { CheckCircle, Shield, Server, Users, Mail, Phone, Globe, MapPin } from 'lucide-react'
 
 const GetQuote = () => {
     const [formData, setFormData] = useState({
@@ -266,8 +266,8 @@ const GetQuote = () => {
                         <p>0759437978</p>
                     </div>
                     <div className="contact-item">
-                        <Globe size={24} className="contact-icon" />
-                        <p>royalsoftwares.co.ke</p>
+                        <MapPin size={24} className="contact-icon" />
+                        <p>Nakuru, Kenya</p>
                     </div>
                 </div>
             </section>

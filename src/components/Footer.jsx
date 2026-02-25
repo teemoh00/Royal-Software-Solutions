@@ -1,9 +1,20 @@
-import { Facebook, Twitter, Linkedin, Instagram, Mail, Phone, Globe } from 'lucide-react'
+import React, { useState } from 'react'
+import { Facebook, Twitter, Linkedin, Instagram, Mail, Phone, Globe, MapPin, ChevronDown } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
-
-
 const Footer = () => {
+    const [openMenus, setOpenMenus] = useState({
+        quickLinks: false,
+        services: false
+    });
+
+    const toggleMenu = (menu) => {
+        setOpenMenus(prev => ({
+            ...prev,
+            [menu]: !prev[menu]
+        }));
+    };
+
     return (
         <footer className="footer">
             <div className="container footer-container">
@@ -17,9 +28,12 @@ const Footer = () => {
                     </p>
                 </div>
 
-                <div className="footer-col">
-                    <h4>Quick Links</h4>
-                    <ul className="footer-links">
+                <div className={`footer-col accordion-col ${openMenus.quickLinks ? 'open' : ''}`}>
+                    <h4 onClick={() => toggleMenu('quickLinks')} className="accordion-header">
+                        Quick Links
+                        <ChevronDown size={20} className="accordion-icon desktop-none" />
+                    </h4>
+                    <ul className="footer-links accordion-content">
                         <li><Link to="/">Home</Link></li>
                         <li><Link to="/about">About</Link></li>
                         <li><Link to="/products-services">Products</Link></li>
@@ -28,9 +42,12 @@ const Footer = () => {
                     </ul>
                 </div>
 
-                <div className="footer-col">
-                    <h4>Services</h4>
-                    <ul className="footer-links">
+                <div className={`footer-col accordion-col ${openMenus.services ? 'open' : ''}`}>
+                    <h4 onClick={() => toggleMenu('services')} className="accordion-header">
+                        Services
+                        <ChevronDown size={20} className="accordion-icon desktop-none" />
+                    </h4>
+                    <ul className="footer-links accordion-content">
                         <li><Link to="/products-services">Academic ERP</Link></li>
                         <li><Link to="/products-services">Custom Software</Link></li>
                         <li><Link to="/products-services">IT Consulting</Link></li>
@@ -43,7 +60,7 @@ const Footer = () => {
                     <ul className="contact-info">
                         <li><Mail size={16} /> info@royalsoftwares.co.ke</li>
                         <li><Phone size={16} /> 0759437978</li>
-                        <li><Globe size={16} /> www.royalsoftwares.co.ke</li>
+                        <li><MapPin size={16} /> Nakuru, Kenya</li>
                     </ul>
                 </div>
             </div>

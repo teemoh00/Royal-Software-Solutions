@@ -18,12 +18,10 @@ const About = () => {
             {/* 2. About Us Overview */}
             <section className="section about-overview">
                 <div className="container about-container">
-                    <div className="about-image-wrapper">
-                        {/* Placeholder for corporate/tech image */}
-                        <div className="tech-image-placeholder">
-                            <div className="floating-card">
-                                <span>Innovation Focused</span>
-                            </div>
+                    <div className="about-image-wrapper" style={{ position: 'relative' }}>
+                        <img src="/tech-globe.jpg" alt="Technology Innovation Strategy" style={{ width: '100%', borderRadius: '16px', boxShadow: '0 20px 40px rgba(0,0,0,0.15)', display: 'block' }} />
+                        <div className="floating-card" style={{ position: 'absolute', bottom: '-20px', right: '-20px', zIndex: 10 }}>
+                            <span>Innovation Focused</span>
                         </div>
                     </div>
                     <div className="about-content">

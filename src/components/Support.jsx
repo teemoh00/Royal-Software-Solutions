@@ -1,4 +1,4 @@
-import { Shield, BookOpen, Settings, Mail, Phone, Globe, User, Lock, Server, Cloud, Database, Cpu, Activity, CheckCircle, ArrowRight } from 'lucide-react'
+import { Shield, BookOpen, Settings, Mail, Phone, Globe, MapPin, User, Lock, Server, Cloud, Database, Cpu, Activity, CheckCircle, ArrowRight } from 'lucide-react'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 
@@ -45,10 +45,10 @@ const Support = () => {
                             <p className="text-sm mt-2">Mon-Fri, 8am - 5pm</p>
                         </div>
                         <div className="contact-card">
-                            <Globe className="contact-icon" />
-                            <h3>Website</h3>
-                            <a href="https://royalsoftwares.co.ke" target="_blank" rel="noopener noreferrer">royalsoftwares.co.ke</a>
-                            <p className="text-sm mt-2">Live Chat Available</p>
+                            <MapPin className="contact-icon" />
+                            <h3>Location</h3>
+                            <span>Nakuru, Kenya</span>
+                            <p className="text-sm mt-2">Head office</p>
                         </div>
                     </div>
                 </div>
