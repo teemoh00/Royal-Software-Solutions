@@ -1,7 +1,20 @@
 import { useState } from 'react'
 import { CheckCircle, Shield, Server, Users, Mail, Phone, Globe, MapPin } from 'lucide-react'
+import SEO from './SEO'
 
 const GetQuote = () => {
+    const quoteStructuredData = {
+        "@context": "https://schema.org",
+        "@type": "WebPage",
+        "name": "Get a Quote - Royal Software Solutions",
+        "description": "Request a customized software solution quote from Royal Software Solutions.",
+        "url": "https://royalsoftwares.co.ke/get-quote",
+        "potentialAction": {
+            "@type": "CommunicateAction",
+            "target": "https://royalsoftwares.co.ke/get-quote"
+        }
+    }
+
     const [formData, setFormData] = useState({
         fullName: '',
         email: '',

@@ -1,8 +1,31 @@
 import { Eye, Target, Shield, Lightbulb, Sprout, Scale, Heart } from 'lucide-react'
+import SEO from './SEO'
 
 const About = () => {
+    const aboutStructuredData = {
+        "@context": "https://schema.org",
+        "@type": "AboutPage",
+        "name": "About Royal Software Solutions",
+        "description": "Learn about Royal Software Solutions, a research-driven technology company building reliable, scalable software solutions for African institutions.",
+        "url": "https://royalsoftwares.co.ke/about",
+        "mainEntity": {
+            "@type": "Organization",
+            "name": "Royal Software Solutions",
+            "foundingDate": "2020",
+            "slogan": "Powering African Excellence and Pride Through Technology",
+            "knowsAbout": ["Software Development", "ERP Systems", "IT Consulting", "Digital Transformation"]
+        }
+    }
+
     return (
         <div id="about" className="about-page">
+            <SEO
+                title="About Us"
+                description="Royal Software Solutions is a leading technology company dedicated to transforming how African businesses and institutions manage operations. Research-driven, innovative solutions for lasting impact."
+                keywords="about Royal Software Solutions, African technology company, software company Kenya, IT innovation Africa, enterprise software development, technology vision mission"
+                canonicalUrl="/about"
+                structuredData={aboutStructuredData}
+            />
             {/* 1. Page Hero */}
             <section className="about-hero">
                 <div className="container">

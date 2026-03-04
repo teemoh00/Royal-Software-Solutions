@@ -1,0 +1,26 @@
+# Royal Software Solutions - robots.txt
+# https://royalsoftwaresolutions.com
+
+User-agent: *
+Allow: /
+Disallow: /login
+Disallow: /register
+Disallow: /api/
+
+# Crawl-delay for polite crawling
+Crawl-delay: 1
+
+# Sitemap location
+Sitemap: https://royalsoftwaresolutions.com/sitemap.xml
+
+# Google-specific
+User-agent: Googlebot
+Allow: /
+Disallow: /login
+Disallow: /register
+
+# Bing-specific
+User-agent: Bingbot
+Allow: /
+Disallow: /login
+Disallow: /register

@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { ArrowRight, CheckCircle, Database, Server, Shield, Globe, Cpu, BarChart, Users, BookOpen, Truck, Building, Activity, Briefcase } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import SEO from './SEO'
 
 const erpFeatures = [
     {

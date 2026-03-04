@@ -1,6 +1,7 @@
 import { Shield, BookOpen, Settings, Mail, Phone, Globe, MapPin, User, Lock, Server, Cloud, Database, Cpu, Activity, CheckCircle, ArrowRight } from 'lucide-react'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import SEO from './SEO'
 
 const Support = () => {
     const [loginEmail, setLoginEmail] = useState('')
@@ -13,10 +14,35 @@ const Support = () => {
         // In a real app: window.location.href = '/admin/dashboard'
     }
 
-
+    const supportStructuredData = {
+        "@context": "https://schema.org",
+        "@type": "ContactPage",
+        "name": "Royal Software Solutions Support",
+        "description": "Get support for Royal Software Solutions products and services. Contact our team via email or phone.",
+        "url": "https://royalsoftwares.co.ke/support",
+        "mainEntity": {
+            "@type": "Organization",
+            "name": "Royal Software Solutions",
+            "contactPoint": {
+                "@type": "ContactPoint",
+                "telephone": "+254-759-437-978",
+                "email": "info@royalsoftwares.co.ke",
+                "contactType": "customer support",
+                "areaServed": "Africa",
+                "availableLanguage": ["English", "Swahili"]
+            }
+        }
+    }
 
     return (
         <div className="support-page">
+            <SEO
+                title="Support"
+                description="Get expert support for Royal Software Solutions products. Contact our dedicated team via email at info@royalsoftwares.co.ke or phone. 24-hour response time guaranteed."
+                keywords="Royal Software Solutions support, technical support Kenya, software support Africa, ERP support, customer service, IT helpdesk"
+                canonicalUrl="/support"
+                structuredData={supportStructuredData}
+            />
             {/* 1. Hero Section */}
             <section className="support-hero">
                 <div className="container hero-container text-center">
