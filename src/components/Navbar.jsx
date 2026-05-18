@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
-import { Menu, X } from 'lucide-react'
+import { Menu, X, ChevronDown } from 'lucide-react'
 import { Link, useLocation } from 'react-router-dom'
-
 
 const Navbar = () => {
     const [isScrolled, setIsScrolled] = useState(false)
@@ -16,7 +15,6 @@ const Navbar = () => {
         return () => window.removeEventListener('scroll', handleScroll)
     }, [])
 
-    // Handle hash scrolling on page load or valid same-page clicks
     useEffect(() => {
         if (location.hash) {
             const element = document.getElementById(location.hash.substring(1));
@@ -30,32 +28,43 @@ const Navbar = () => {
         }
     }, [location]);
 
-
-
     return (
-        <nav className={`navbar ${isScrolled ? 'scrolled' : ''}`}>
-            <div className="container navbar-container">
+        <div className={`navbar-pill-wrapper ${isScrolled ? 'scrolled' : ''}`}>
+            <nav className="navbar-pill">
                 <Link to="/" className="logo">
-                    <img src="/logo (2).png" alt="Royal Software Solutions" className="navbar-logo-img" />
-                    <span className="logo-text">Royal Software Solutions</span>
+                    <img src="/logo (2).png" alt="Royal Software Solutions" className="navbar-logo-img" style={{ height: '32px' }} />
+                    <span className="logo-text desktop-only">Royal Software</span>
                 </Link>
 
-                <div className={`nav-links ${isMenuOpen ? 'active' : ''}`}>
+                <div className={`nav-pill-links ${isMenuOpen ? 'active' : ''}`}>
                     <Link to="/" onClick={() => setIsMenuOpen(false)}>Home</Link>
+                    
+                    <div className="nav-item-dropdown">
+                        <Link to="/products-services" className="dropdown-trigger">
+                            Products <ChevronDown size={14} />
+                        </Link>
+                        <div className="dropdown-menu">
+                            <Link to="/fahari-academia" onClick={() => setIsMenuOpen(false)}>Fahari Academia</Link>
+                            <Link to="/fahari-ledger" onClick={() => setIsMenuOpen(false)}>Fahari Ledger</Link>
+                            <div className="dropdown-divider"></div>
+                            <Link to="/products-services" className="view-all" onClick={() => setIsMenuOpen(false)}>All Solutions</Link>
+                        </div>
+                    </div>
+
                     <Link to="/about" onClick={() => setIsMenuOpen(false)}>About</Link>
-                    <Link to="/products-services" onClick={() => setIsMenuOpen(false)}>Products & Services</Link>
-                    <Link to="/support" className="btn-support" onClick={() => setIsMenuOpen(false)}>Support</Link>
-                    <Link to="/get-quote" className="btn btn-secondary mobile-only" onClick={() => setIsMenuOpen(false)}>Get Quote</Link>
+                    <Link to="/support" onClick={() => setIsMenuOpen(false)}>Support</Link>
                 </div>
 
-                <div className="nav-actions">
-                    <Link to="/get-quote" className="btn btn-secondary desktop-only">Get Quote</Link>
-                    <button className="menu-toggle" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+                <div className="nav-pill-actions">
+                    <Link to="/login" className="btn-pill-login desktop-only">New Ticket</Link>
+                    <Link to="/get-quote" className="btn-pill-primary">Get Started</Link>
+                    
+                    <button className="menu-toggle" onClick={() => setIsMenuOpen(!isMenuOpen)} style={{ color: 'white' }}>
                         {isMenuOpen ? <X /> : <Menu />}
                     </button>
                 </div>
-            </div>
-        </nav>
+            </nav>
+        </div>
     )
 }
 

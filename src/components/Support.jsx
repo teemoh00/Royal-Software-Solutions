@@ -1,6 +1,7 @@
 import { Shield, BookOpen, Settings, Mail, Phone, Globe, MapPin, User, Lock, Server, Cloud, Database, Cpu, Activity, CheckCircle, ArrowRight } from 'lucide-react'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import SEO from './SEO'
 
 const Support = () => {
     const [loginEmail, setLoginEmail] = useState('')
@@ -17,6 +18,11 @@ const Support = () => {
 
     return (
         <div className="support-page">
+            <SEO 
+                title="Support" 
+                description="Get help with Royal Software Solutions. Contact our support team for assistance with Fahari products and custom software."
+                path="/support"
+            />
             {/* 1. Hero Section */}
             <section className="support-hero">
                 <div className="container hero-container text-center">

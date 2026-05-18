@@ -1,26 +1,26 @@
-import { Lightbulb, Search, Cloud, Headset } from 'lucide-react'
+import { MapPin, Zap, Layers, Headset } from 'lucide-react'
 
 const WhyUs = () => {
     const reasons = [
         {
-            icon: <Lightbulb size={40} />,
-            title: "Innovative Solutions",
-            description: "Cutting-edge technology tailored for modern problems."
+            icon: <MapPin size={40} />,
+            title: "Built for East Africa",
+            description: "M-Pesa integration, NHIF/NSSF/PAYE compliance, and CBC curriculum support — built in from day one, not added as an afterthought."
         },
         {
-            icon: <Search size={40} />,
-            title: "Research-Driven Approach",
-            description: "Data-backed strategies ensures sustainable growth."
+            icon: <Zap size={40} />,
+            title: "Live in 24 Hours",
+            description: "Most schools and businesses go live within one day of signing up. No lengthy implementation timelines. No expensive consultants."
         },
         {
-            icon: <Cloud size={40} />,
-            title: "Scalable Cloud Systems",
-            description: "Infrastructure that grows with your organization."
+            icon: <Layers size={40} />,
+            title: "One Platform, Every Department",
+            description: "Fees, exams, HR, payroll, procurement, and accounting — all connected under one login. No more switching between disconnected tools."
         },
         {
             icon: <Headset size={40} />,
-            title: "Dedicated Support",
-            description: "24/7 expert assistance whenever you need it."
+            title: "Local Support, Real People",
+            description: "Our team is based in Kenya. We speak Swahili and English. We visit your site, answer your calls, and stay until the problem is solved."
         }
     ]
 

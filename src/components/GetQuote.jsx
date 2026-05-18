@@ -1,5 +1,7 @@
-import { useState } from 'react'
-import { CheckCircle, Shield, Server, Users, Mail, Phone, Globe, MapPin } from 'lucide-react'
+import { useState, useRef } from 'react'
+import { CheckCircle, Shield, Server, Users, Mail, Phone, Globe, MapPin, Loader2, AlertCircle } from 'lucide-react'
+import emailjs from '@emailjs/browser'
+import SEO from './SEO'
 
 const GetQuote = () => {
     const [formData, setFormData] = useState({
@@ -22,6 +24,10 @@ const GetQuote = () => {
         }
     })
 
+    const [isSubmitting, setIsSubmitting] = useState(false)
+    const [submitStatus, setSubmitStatus] = useState(null) // 'success' or 'error'
+    const formRef = useRef()
+
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target
         if (type === 'checkbox') {
@@ -37,14 +43,70 @@ const GetQuote = () => {
         }
     }
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault()
-        console.log("Form Submitted:", formData)
-        alert("Thank you! Your quote request has been submitted. We will contact you shortly.")
+        setIsSubmitting(true)
+        setSubmitStatus(null)
+
+        try {
+            await emailjs.send(
+                import.meta.env.VITE_EMAILJS_SERVICE_ID,
+                import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
+                {
+                    from_name: formData.fullName,
+                    from_email: formData.email,
+                    phone: formData.phone,
+                    organization: formData.organization,
+                    role: formData.role,
+                    service: formData.service,
+                    project_description: formData.projectDescription,
+                    users: formData.users,
+                    industry: formData.industry,
+                    budget: formData.budget,
+                    timeline: formData.timeline,
+                    options: Object.entries(formData.options)
+                        .filter(([_, checked]) => checked)
+                        .map(([key, _]) => key)
+                        .join(', ')
+                },
+                import.meta.env.VITE_EMAILJS_PUBLIC_KEY
+            )
+
+            setSubmitStatus('success')
+            setFormData({
+                fullName: '',
+                email: '',
+                phone: '',
+                organization: '',
+                role: '',
+                service: '',
+                projectDescription: '',
+                users: '',
+                industry: '',
+                budget: '',
+                timeline: '',
+                options: {
+                    cloudHosting: false,
+                    training: false,
+                    integration: false,
+                    maintenance: false
+                }
+            })
+        } catch (error) {
+            console.error("EmailJS Error:", error)
+            setSubmitStatus('error')
+        } finally {
+            setIsSubmitting(false)
+        }
     }
 
     return (
         <div className="quote-page">
+            <SEO 
+                title="Get a Quote" 
+                description="Request a customized software solution for your institution or business. We provide Academic ERP, Custom Software, and more."
+                path="/get-quote"
+            />
             {/* 1. Hero Section */}
             <section className="quote-hero">
                 <div className="container">
@@ -217,7 +279,28 @@ const GetQuote = () => {
                                 </div>
                             </div>
 
-                            <button type="submit" className="btn-submit">Submit Request</button>
+                            {submitStatus === 'success' && (
+                                <div className="submit-success-msg" style={{ background: '#dcfce7', color: '#166534', padding: '1rem', borderRadius: '8px', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                    <CheckCircle size={20} />
+                                    <span>Thank you! Your quote request has been submitted successfully. We will contact you shortly.</span>
+                                </div>
+                            )}
+
+                            {submitStatus === 'error' && (
+                                <div className="submit-error-msg" style={{ background: '#fee2e2', color: '#991b1b', padding: '1rem', borderRadius: '8px', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                    <AlertCircle size={20} />
+                                    <span>Something went wrong. Please try again or call us directly at 0759437978.</span>
+                                </div>
+                            )}
+
+                            <button type="submit" className="btn-submit" disabled={isSubmitting}>
+                                {isSubmitting ? (
+                                    <>
+                                        <Loader2 className="animate-spin" size={20} />
+                                        Sending...
+                                    </>
+                                ) : 'Submit Request'}
+                            </button>
                         </form>
                     </div>
                 </div>

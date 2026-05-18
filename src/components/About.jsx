@@ -1,8 +1,15 @@
 import { Eye, Target, Shield, Lightbulb, Sprout, Scale, Heart } from 'lucide-react'
+import SEO from './SEO'
 
 const About = () => {
     return (
         <div id="about" className="about-page">
+            <SEO 
+                title="About Us" 
+                description="Royal Software Solutions is a research-driven technology company building reliable, scalable, and sustainable software solutions for institutions and businesses across Africa."
+                path="/about"
+            />
+
             {/* 1. Page Hero */}
             <section className="about-hero">
                 <div className="container">

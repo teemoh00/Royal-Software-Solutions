@@ -1,14 +1,15 @@
-import { ArrowRight, Code, Server, Shield, Globe } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
 const Hero = () => {
     return (
-        <section id="home" className="hero">
-            <div className="stars-container">
-                <div className="stars-sm"></div>
-                <div className="stars-md"></div>
-                <div className="stars-lg"></div>
-            </div>
+        <section 
+            id="home" 
+            className="hero-corporate" 
+            style={{ backgroundImage: 'url("/hero-bg.png")' }}
+        >
+            <div className="hero-overlay"></div>
+            
             <div className="container hero-container">
                 <div className="hero-content">
                     <h1>Powering African Excellence and Pride Through Technology</h1>
@@ -16,29 +17,32 @@ const Hero = () => {
                         We build modern, scalable software solutions for schools, businesses, and institutions across Africa.
                     </p>
                     <div className="hero-buttons">
-                        <Link to="/get-quote" className="btn btn-primary">
-                            Get a Quote <ArrowRight size={18} />
+                        <Link to="/get-quote" className="btn btn-pill-primary">
+                            Get Started <ArrowRight size={18} />
                         </Link>
                         <Link to="/products-services" className="btn btn-outline">
-                            Explore Products
+                            Explore Solutions
                         </Link>
                     </div>
                 </div>
+                
                 <div className="hero-visual">
-                    <div className="abstract-shape"></div>
-                    {/* Tech Grid for 3D Effect */}
-                    <div className="tech-grid">
-                        <div className="grid-item">
-                            <Code size={48} className="brand-icon" />
+                    <div className="stat-grid-glass">
+                        <div className="stat-card-glass">
+                            <h3>5+</h3>
+                            <p>Fahari Products Live</p>
                         </div>
-                        <div className="grid-item">
-                            <Server size={48} className="brand-icon" />
+                        <div className="stat-card-glass">
+                            <h3>CBC/KCSE</h3>
+                            <p>Curriculum Compliant</p>
                         </div>
-                        <div className="grid-item">
-                            <Shield size={48} className="brand-icon" />
+                        <div className="stat-card-glass">
+                            <h3>M-Pesa</h3>
+                            <p>Integrated Payments</p>
                         </div>
-                        <div className="grid-item">
-                            <Globe size={48} className="brand-icon" />
+                        <div className="stat-card-glass">
+                            <h3>1 Day</h3>
+                            <p>Average Go-Live</p>
                         </div>
                     </div>
                 </div>

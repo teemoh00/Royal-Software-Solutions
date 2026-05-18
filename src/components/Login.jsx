@@ -1,91 +1,117 @@
 import { useState } from 'react'
-import { Mail, Lock, Eye, EyeOff, User } from 'lucide-react'
-import { Link } from 'react-router-dom'
-
-
+import { Mail, Lock, Eye, EyeOff, ShieldCheck, ArrowRight, RefreshCw } from 'lucide-react'
+import { Link, useNavigate } from 'react-router-dom'
 
 const Login = () => {
     const [email, setEmail] = useState('')
     const [otp, setOtp] = useState('')
-    const [showOtp, setShowOtp] = useState(false)
+    const [step, setStep] = useState(1) // 1: Email, 2: OTP
+    const [isLoading, setIsLoading] = useState(false)
+    const navigate = useNavigate()
 
-    // ... other handlers ...
-
-    const handleLogin = (e) => {
+    const handleSendOtp = (e) => {
         e.preventDefault()
-        alert('Logging in...')
+        setIsLoading(true)
+        // Simulate API call
+        setTimeout(() => {
+            setIsLoading(false)
+            setStep(2)
+        }, 1500)
     }
 
-    const handleRequestOtp = (e) => {
+    const handleVerifyOtp = (e) => {
         e.preventDefault()
-        alert('OTP code sent to ' + email)
+        setIsLoading(true)
+        // Simulate verification
+        setTimeout(() => {
+            setIsLoading(false)
+            navigate('/portal/dashboard')
+        }, 1500)
     }
-
 
     return (
-        <div className="login-page-container">
+        <div className="login-page-container client-login">
             <div className="login-card-split">
-                {/* Left Panel */}
                 <div className="login-left">
                     <div className="brand-welcome">
                         <h2 className="cursive-welcome">Welcome to</h2>
-                        <h1 className="platform-title">CLIENT SUPPORT PLATFORM</h1>
+                        <h1 className="platform-title">FAHARI UNIFIED IDENTITY</h1>
                         <div className="login-brand-divider"></div>
                         <div className="login-logo-area">
                             <img src="/logo (2).png" alt="Royal Software Solutions" className="login-logo-img" />
                         </div>
-                        <p className="user-login-label">USER LOGIN</p>
+                        <p className="user-login-label">CLIENT ACCESS PORTAL</p>
                     </div>
                 </div>
 
-                {/* Right Panel */}
                 <div className="login-right">
-                    <form onSubmit={handleLogin} className="login-split-form">
-                        <div className="login-input-wrapper">
-                            <div className="icon-box">
-                                <User size={18} />
-                            </div>
-                            <input
-                                type="email"
-                                placeholder="Enter your email"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                required
-                            />
+                    <div className="login-form-container">
+                        <div className="auth-header">
+                            <ShieldCheck className="auth-icon" size={40} />
+                            <h2>Secure Client Login</h2>
+                            <p>{step === 1 ? 'Enter your registered email to receive an access code.' : 'We sent a 6-digit code to your email.'}</p>
                         </div>
 
-                        <button type="button" className="btn-request-otp" onClick={handleRequestOtp}>
-                            Request OTP for login
-                        </button>
+                        {step === 1 ? (
+                            <form onSubmit={handleSendOtp} className="login-split-form">
+                                <div className="login-input-wrapper">
+                                    <div className="icon-box">
+                                        <Mail size={18} />
+                                    </div>
+                                    <input
+                                        type="email"
+                                        placeholder="yourname@email.com"
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
+                                        required
+                                    />
+                                </div>
 
-                        <div className="login-input-wrapper">
-                            <div className="icon-box">
-                                <Lock size={18} />
-                            </div>
-                            <input
-                                type={showOtp ? "text" : "password"}
-                                placeholder="Enter OTP"
-                                value={otp}
-                                onChange={(e) => setOtp(e.target.value)}
-                            />
-                            <button type="button" className="toggle-password" onClick={() => setShowOtp(!showOtp)}>
-                                {showOtp ? <EyeOff size={16} /> : <Eye size={16} />}
-                            </button>
-                        </div>
+                                <button type="submit" className="btn-login-submit" disabled={isLoading}>
+                                    {isLoading ? <RefreshCw className="spin" size={20} /> : 'Request Access Code'}
+                                    {!isLoading && <ArrowRight size={20} />}
+                                </button>
+                            </form>
+                        ) : (
+                            <form onSubmit={handleVerifyOtp} className="login-split-form">
+                                <div className="login-input-wrapper">
+                                    <div className="icon-box">
+                                        <Lock size={18} />
+                                    </div>
+                                    <input
+                                        type="text"
+                                        placeholder="Enter 6-digit OTP"
+                                        value={otp}
+                                        onChange={(e) => setOtp(e.target.value)}
+                                        maxLength={6}
+                                        required
+                                    />
+                                </div>
 
-                        <button type="submit" className="btn-login-submit">
-                            Login
-                        </button>
+                                <button type="submit" className="btn-login-submit" disabled={isLoading}>
+                                    {isLoading ? <RefreshCw className="spin" size={20} /> : 'Verify & Enter Portal'}
+                                </button>
+
+                                <button type="button" className="btn-text-link" onClick={() => setStep(1)}>
+                                    Try a different email
+                                </button>
+                            </form>
+                        )}
 
                         <div className="login-footer-links">
-                            <Link to="/register">Create Account</Link> | <Link to="/">Home</Link>
+                            <span>Don't have an account? </span>
+                            <Link to="/register">Create One</Link>
                         </div>
-                    </form>
+                        
+                        <div className="admin-link-hint">
+                            <Link to="/admin/login">Internal Staff Login</Link>
+                        </div>
+                    </div>
                 </div>
             </div>
+            
             <div className="login-copyright">
-                <p>Copyright © 2022 - 2026 | Royal Software Solutions.</p>
-                <p>Transforming Business Processes, Sustaining Growth.</p>
+                <p>&copy; 2022 - {new Date().getFullYear()} Royal Software Solutions | All Rights Reserved.</p>
             </div>
         </div>
     )
