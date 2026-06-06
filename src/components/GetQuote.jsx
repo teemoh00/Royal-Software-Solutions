@@ -1,27 +1,17 @@
 import { useState, useRef } from 'react'
-import { CheckCircle, Shield, Server, Users, Mail, Phone, Globe, MapPin, Loader2, AlertCircle } from 'lucide-react'
+import { CheckCircle, Shield, Server, Users, Mail, Phone, MapPin, Loader2, AlertCircle } from 'lucide-react'
 import emailjs from '@emailjs/browser'
 import SEO from './SEO'
 
 const GetQuote = () => {
     const [formData, setFormData] = useState({
         fullName: '',
-        email: '',
-        phone: '',
         organization: '',
-        role: '',
-        service: '',
-        projectDescription: '',
-        users: '',
-        industry: '',
-        budget: '',
-        timeline: '',
-        options: {
-            cloudHosting: false,
-            training: false,
-            integration: false,
-            maintenance: false
-        }
+        institutionType: '',
+        phone: '',
+        email: '',
+        productInterest: '',
+        operationalChallenge: ''
     })
 
     const [isSubmitting, setIsSubmitting] = useState(false)
@@ -29,18 +19,8 @@ const GetQuote = () => {
     const formRef = useRef()
 
     const handleChange = (e) => {
-        const { name, value, type, checked } = e.target
-        if (type === 'checkbox') {
-            setFormData({
-                ...formData,
-                options: {
-                    ...formData.options,
-                    [name]: checked
-                }
-            })
-        } else {
-            setFormData({ ...formData, [name]: value })
-        }
+        const { name, value } = e.target
+        setFormData({ ...formData, [name]: value })
     }
 
     const handleSubmit = async (e) => {
@@ -57,17 +37,14 @@ const GetQuote = () => {
                     from_email: formData.email,
                     phone: formData.phone,
                     organization: formData.organization,
-                    role: formData.role,
-                    service: formData.service,
-                    project_description: formData.projectDescription,
-                    users: formData.users,
-                    industry: formData.industry,
-                    budget: formData.budget,
-                    timeline: formData.timeline,
-                    options: Object.entries(formData.options)
-                        .filter(([_, checked]) => checked)
-                        .map(([key, _]) => key)
-                        .join(', ')
+                    institution_type: formData.institutionType,
+                    product_interest: formData.productInterest,
+                    operational_challenge: formData.operationalChallenge,
+                    // Legacy fallback fields for backward compatibility with EmailJS templates
+                    service: formData.productInterest,
+                    project_description: formData.operationalChallenge,
+                    industry: formData.institutionType,
+                    role: 'N/A'
                 },
                 import.meta.env.VITE_EMAILJS_PUBLIC_KEY
             )
@@ -75,22 +52,12 @@ const GetQuote = () => {
             setSubmitStatus('success')
             setFormData({
                 fullName: '',
-                email: '',
-                phone: '',
                 organization: '',
-                role: '',
-                service: '',
-                projectDescription: '',
-                users: '',
-                industry: '',
-                budget: '',
-                timeline: '',
-                options: {
-                    cloudHosting: false,
-                    training: false,
-                    integration: false,
-                    maintenance: false
-                }
+                institutionType: '',
+                phone: '',
+                email: '',
+                productInterest: '',
+                operationalChallenge: ''
             })
         } catch (error) {
             console.error("EmailJS Error:", error)
@@ -103,19 +70,19 @@ const GetQuote = () => {
     return (
         <div className="quote-page">
             <SEO 
-                title="Get a Quote" 
-                description="Request a customized software solution for your institution or business. We provide Academic ERP, Custom Software, and more."
+                title="Get a Demo" 
+                description="Request a personalized demo of the Fahari operating system. Learn how we streamline operations, secure finances, and ensure compliance."
                 path="/get-quote"
             />
             {/* 1. Hero Section */}
             <section className="quote-hero">
                 <div className="container">
-                    <h1 className="hero-title">Request a Customized Software Solution</h1>
+                    <h1 className="hero-title">Schedule a Personalized Demo</h1>
                     <p className="hero-subtitle">
-                        Tell us about your institution or business needs, and our team will design a scalable, research-driven solution tailored specifically for you.
+                        See how the Fahari operating system can transform your organization's administrative, financial, and operational workflows.
                     </p>
                     <p className="hero-desc">
-                        We provide Academic ERP systems, enterprise software, custom development, and the FAHARI SaaS ecosystem.
+                        Experience native M-Pesa integrations, CBC/KCSE academic compliance, SASRA financial reporting, and unified business operations.
                     </p>
                 </div>
             </section>
@@ -124,28 +91,28 @@ const GetQuote = () => {
             <section className="why-choose-quote">
                 <div className="container">
                     <div className="section-header text-center">
-                        <h2 className="section-title">Why Work With Royal Software Solutions?</h2>
+                        <h2 className="section-title">Why Implement Fahari?</h2>
                     </div>
                     <div className="trust-grid-quote">
                         <div className="trust-card">
                             <CheckCircle className="trust-icon" size={32} />
-                            <h3>Research-Driven Technology</h3>
-                            <p>Solutions built on data and market research.</p>
+                            <h3>Africa-Native Workflows</h3>
+                            <p>Designed specifically for local operational realities and payment systems.</p>
                         </div>
                         <div className="trust-card">
                             <Server className="trust-icon" size={32} />
-                            <h3>Scalable Cloud-Based Systems</h3>
-                            <p>Grow your business without technical limits.</p>
+                            <h3>Zero-Infrastructure Cloud</h3>
+                            <p>Access your school or business data from any device, anywhere, with absolute uptime.</p>
                         </div>
                         <div className="trust-card">
                             <Shield className="trust-icon" size={32} />
-                            <h3>Secure & Integrated Architecture</h3>
-                            <p>Enterprise-grade security and API integrations.</p>
+                            <h3>Automated Compliance</h3>
+                            <p>Stay aligned with Ministry of Education, KRA, and SASRA regulatory frameworks.</p>
                         </div>
                         <div className="trust-card">
                             <Users className="trust-icon" size={32} />
-                            <h3>Dedicated Client Support</h3>
-                            <p>24/7 support and training for your team.</p>
+                            <h3>Dedicated On-Site Training</h3>
+                            <p>We don't just ship software. We train your staff on-site to ensure full adoption.</p>
                         </div>
                     </div>
                 </div>
@@ -155,141 +122,112 @@ const GetQuote = () => {
             <section className="quote-form-section">
                 <div className="container">
                     <div className="quote-form-card">
-                        <form onSubmit={handleSubmit}>
-                            {/* Section A: Contact Details */}
+                        <form onSubmit={handleSubmit} ref={formRef}>
                             <div className="form-section">
-                                <h3 className="form-section-title">A. Contact Details</h3>
+                                <h3 className="form-section-title">Demo Request Details</h3>
                                 <div className="form-grid">
                                     <div className="form-group">
                                         <label>Full Name <span className="required">*</span></label>
-                                        <input type="text" name="fullName" value={formData.fullName} onChange={handleChange} required placeholder="Enter your full name" />
+                                        <input 
+                                            type="text" 
+                                            name="fullName" 
+                                            value={formData.fullName} 
+                                            onChange={handleChange} 
+                                            required 
+                                            placeholder="Enter your full name" 
+                                        />
                                     </div>
                                     <div className="form-group">
-                                        <label>Email Address <span className="required">*</span></label>
-                                        <input type="email" name="email" value={formData.email} onChange={handleChange} required placeholder="Enter your email" />
+                                        <label>Organisation / Institution Name <span className="required">*</span></label>
+                                        <input 
+                                            type="text" 
+                                            name="organization" 
+                                            value={formData.organization} 
+                                            onChange={handleChange} 
+                                            required 
+                                            placeholder="Company or School name" 
+                                        />
                                     </div>
                                     <div className="form-group">
-                                        <label>Phone Number <span className="required">*</span></label>
-                                        <input type="tel" name="phone" value={formData.phone} onChange={handleChange} required placeholder="Enter your phone number" />
-                                    </div>
-                                    <div className="form-group">
-                                        <label>Organization Name <span className="required">*</span></label>
-                                        <input type="text" name="organization" value={formData.organization} onChange={handleChange} required placeholder="Company or Institution name" />
-                                    </div>
-                                    <div className="form-group full-width">
-                                        <label>Position / Role</label>
-                                        <input type="text" name="role" value={formData.role} onChange={handleChange} placeholder="e.g. CEO, IT Manager, Principal" />
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Section B: Service Selection */}
-                            <div className="form-section">
-                                <h3 className="form-section-title">B. Service Selection</h3>
-                                <div className="form-group full-width">
-                                    <label>Service Interested In</label>
-                                    <select name="service" value={formData.service} onChange={handleChange}>
-                                        <option value="">Select a Service</option>
-                                        <option value="Academic ERP">Academic ERP System</option>
-                                        <option value="Custom Software">Custom Software Development</option>
-                                        <option value="IT Consulting">IT Consulting & Digital Transformation</option>
-                                        <option value="FAHARI Ecosystem">FAHARI Ecosystem</option>
-                                        <option value="POS Inventory">POS & Inventory System</option>
-                                        <option value="CRM">CRM System</option>
-                                        <option value="Accounting">Accounting & Financial Systems</option>
-                                        <option value="Other">Other</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            {/* Section C: Project Details */}
-                            <div className="form-section">
-                                <h3 className="form-section-title">C. Project Details</h3>
-                                <div className="form-group full-width">
-                                    <label>Describe Your Project</label>
-                                    <textarea name="projectDescription" value={formData.projectDescription} onChange={handleChange} rows="4" placeholder="Briefly describe what you need..."></textarea>
-                                </div>
-                                <div className="form-grid">
-                                    <div className="form-group">
-                                        <label>Estimated Number of Users</label>
-                                        <input type="number" name="users" value={formData.users} onChange={handleChange} placeholder="e.g. 50" />
-                                    </div>
-                                    <div className="form-group">
-                                        <label>Industry Type</label>
-                                        <select name="industry" value={formData.industry} onChange={handleChange}>
-                                            <option value="">Select Industry</option>
-                                            <option value="Education">Education</option>
-                                            <option value="Retail">Retail</option>
-                                            <option value="Healthcare">Healthcare</option>
-                                            <option value="Manufacturing">Manufacturing</option>
-                                            <option value="Logistics">Logistics</option>
-                                            <option value="Construction">Construction</option>
-                                            <option value="NGO">NGO</option>
-                                            <option value="Hospitality">Hospitality</option>
+                                        <label>Institution Type <span className="required">*</span></label>
+                                        <select 
+                                            name="institutionType" 
+                                            value={formData.institutionType} 
+                                            onChange={handleChange} 
+                                            required
+                                        >
+                                            <option value="">Select Institution Type</option>
+                                            <option value="School">School / College</option>
+                                            <option value="Business">Business / SME</option>
+                                            <option value="SACCO">SACCO</option>
+                                            <option value="NGO">NGO / Foundation</option>
+                                            <option value="Hospital">Hospital / Clinic</option>
                                             <option value="Other">Other</option>
                                         </select>
                                     </div>
                                     <div className="form-group">
-                                        <label>Budget Range</label>
-                                        <select name="budget" value={formData.budget} onChange={handleChange}>
-                                            <option value="">Select Budget Range</option>
-                                            <option value="Below 100k">Below KES 100,000</option>
-                                            <option value="100k-500k">KES 100,000 – 500,000</option>
-                                            <option value="500k-1M">KES 500,000 – 1,000,000</option>
-                                            <option value="Above 1M">Above KES 1,000,000</option>
-                                        </select>
+                                        <label>Phone Number <span className="required">*</span></label>
+                                        <input 
+                                            type="tel" 
+                                            name="phone" 
+                                            value={formData.phone} 
+                                            onChange={handleChange} 
+                                            required 
+                                            placeholder="e.g. +254 759 437 978" 
+                                        />
                                     </div>
                                     <div className="form-group">
-                                        <label>Project Timeline</label>
-                                        <select name="timeline" value={formData.timeline} onChange={handleChange}>
-                                            <option value="">Select Timeline</option>
-                                            <option value="Immediate">Immediate</option>
-                                            <option value="1-3 Months">1–3 Months</option>
-                                            <option value="3-6 Months">3–6 Months</option>
-                                            <option value="Flexible">Flexible</option>
+                                        <label>Email Address <span className="required">*</span></label>
+                                        <input 
+                                            type="email" 
+                                            name="email" 
+                                            value={formData.email} 
+                                            onChange={handleChange} 
+                                            required 
+                                            placeholder="Enter email address" 
+                                        />
+                                    </div>
+                                    <div className="form-group">
+                                        <label>Product Interest <span className="required">*</span></label>
+                                        <select 
+                                            name="productInterest" 
+                                            value={formData.productInterest} 
+                                            onChange={handleChange} 
+                                            required
+                                        >
+                                            <option value="">Select Product</option>
+                                            <option value="Fahari Academia ERP">Fahari Academia ERP (School Management)</option>
+                                            <option value="Fahari Ledger">Fahari Ledger (Financial/SACCO Accounting)</option>
+                                            <option value="Fahari Nexus">Fahari Nexus (Business/SME Operations)</option>
+                                            <option value="Custom Software Development">Custom Software Development</option>
+                                            <option value="Other">Other Services</option>
                                         </select>
                                     </div>
-                                </div>
-                            </div>
-
-                            {/* Section D: Additional Options */}
-                            <div className="form-section">
-                                <h3 className="form-section-title">D. Additional Options</h3>
-                                <div className="checkbox-group">
-                                    <label className="checkbox-container">
-                                        <input type="checkbox" name="cloudHosting" checked={formData.options.cloudHosting} onChange={handleChange} />
-                                        <span className="checkmark"></span>
-                                        I need cloud hosting
-                                    </label>
-                                    <label className="checkbox-container">
-                                        <input type="checkbox" name="training" checked={formData.options.training} onChange={handleChange} />
-                                        <span className="checkmark"></span>
-                                        I require training for staff
-                                    </label>
-                                    <label className="checkbox-container">
-                                        <input type="checkbox" name="integration" checked={formData.options.integration} onChange={handleChange} />
-                                        <span className="checkmark"></span>
-                                        I need system integration with existing tools
-                                    </label>
-                                    <label className="checkbox-container">
-                                        <input type="checkbox" name="maintenance" checked={formData.options.maintenance} onChange={handleChange} />
-                                        <span className="checkmark"></span>
-                                        I want ongoing maintenance support
-                                    </label>
+                                    <div className="form-group full-width">
+                                        <label>Biggest Operational Challenge <span className="required">*</span></label>
+                                        <textarea 
+                                            name="operationalChallenge" 
+                                            value={formData.operationalChallenge} 
+                                            onChange={handleChange} 
+                                            required 
+                                            rows="5" 
+                                            placeholder="What is the biggest operational hurdle your organization is facing today?"
+                                        ></textarea>
+                                    </div>
                                 </div>
                             </div>
 
                             {submitStatus === 'success' && (
                                 <div className="submit-success-msg" style={{ background: '#dcfce7', color: '#166534', padding: '1rem', borderRadius: '8px', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '10px' }}>
                                     <CheckCircle size={20} />
-                                    <span>Thank you! Your quote request has been submitted successfully. We will contact you shortly.</span>
+                                    <span>Thank you! Your demo request has been submitted successfully. A Fahari product consultant will contact you within 24 hours.</span>
                                 </div>
                             )}
 
                             {submitStatus === 'error' && (
                                 <div className="submit-error-msg" style={{ background: '#fee2e2', color: '#991b1b', padding: '1rem', borderRadius: '8px', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '10px' }}>
                                     <AlertCircle size={20} />
-                                    <span>Something went wrong. Please try again or call us directly at 0759437978.</span>
+                                    <span>Something went wrong. Please try again or reach out directly via WhatsApp or call at +254 759 437 978.</span>
                                 </div>
                             )}
 
@@ -297,9 +235,9 @@ const GetQuote = () => {
                                 {isSubmitting ? (
                                     <>
                                         <Loader2 className="animate-spin" size={20} />
-                                        Sending...
+                                        Scheduling...
                                     </>
-                                ) : 'Submit Request'}
+                                ) : 'Request Free Demo'}
                             </button>
                         </form>
                     </div>
@@ -310,28 +248,28 @@ const GetQuote = () => {
             <section className="next-steps-section">
                 <div className="container">
                     <div className="section-header text-center">
-                        <h2 className="section-title">What Happens After You Submit?</h2>
+                        <h2 className="section-title">What Happens Next?</h2>
                     </div>
                     <div className="steps-grid">
                         <div className="step-card">
                             <span className="step-number">1</span>
-                            <h3>Request Review</h3>
-                            <p>Our team reviews your request within 24 hours.</p>
+                            <h3>Initial Contact</h3>
+                            <p>Our product specialist reviews your operational challenges and contacts you within 24 hours.</p>
                         </div>
                         <div className="step-card">
                             <span className="step-number">2</span>
-                            <h3>Consultation</h3>
-                            <p>We schedule a free consultation to discuss needs.</p>
+                            <h3>Customized Demo</h3>
+                            <p>We schedule a 20-minute video session to walk you through Fahari's features relevant to your needs.</p>
                         </div>
                         <div className="step-card">
                             <span className="step-number">3</span>
-                            <h3>Analysis</h3>
-                            <p>We analyze your requirements in depth.</p>
+                            <h3>Pilot Plan</h3>
+                            <p>We set up a free trial instance for your institution populated with your initial data structures.</p>
                         </div>
                         <div className="step-card">
                             <span className="step-number">4</span>
-                            <h3>Proposal</h3>
-                            <p>You receive a customized proposal and quote.</p>
+                            <h3>Onboarding</h3>
+                            <p>We deploy, import your historical records, and conduct hands-on training for your entire staff.</p>
                         </div>
                     </div>
                 </div>
@@ -346,7 +284,7 @@ const GetQuote = () => {
                     </div>
                     <div className="contact-item">
                         <Phone size={24} className="contact-icon" />
-                        <p>0759437978</p>
+                        <p>+254 759 437 978</p>
                     </div>
                     <div className="contact-item">
                         <MapPin size={24} className="contact-icon" />
@@ -358,10 +296,10 @@ const GetQuote = () => {
             {/* 6. CTA Banner */}
             <section className="cta-banner">
                 <div className="container">
-                    <h2>Let’s Build Something Powerful Together</h2>
+                    <h2>Ready to Elevate Your Operational Standards?</h2>
                     <br />
                     <button className="btn btn-secondary" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-                        Schedule Consultation
+                        Book a Free Demo Now
                     </button>
                 </div>
             </section>

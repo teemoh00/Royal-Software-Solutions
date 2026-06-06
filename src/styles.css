@@ -554,20 +554,29 @@ ul {
 
 /* Mobile Navbar - Side Drawer Redesign */
 @media (max-width: 768px) {
+  :root {
+    --container-padding: 1rem;
+    --section-padding: 4rem 1rem;
+  }
+
   .menu-toggle {
     display: block;
     z-index: 1002;
     /* Higher than drawer */
     position: relative;
     padding: 0.5rem;
-    background: white;
-    /* Ensure visibility */
-    color: var(--primary-color);
-    border-radius: 50%;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    background: transparent;
+    color: white !important;
+    border-radius: 8px;
+    box-shadow: none;
   }
 
-  .nav-links {
+  .navbar-pill-wrapper.scrolled .menu-toggle {
+    color: white !important; /* Keep white on dark glass background */
+  }
+
+  .nav-links,
+  .nav-pill-links {
     position: fixed;
     top: 0;
     right: -100%;
@@ -594,10 +603,12 @@ ul {
     opacity: 1;
     visibility: visible;
     transform: none;
+    display: flex !important;
   }
 
   /* Backdrop simulation using massive box-shadow when active */
-  .nav-links.active {
+  .nav-links.active,
+  .nav-pill-links.active {
     right: 0;
     box-shadow:
       -5px 0 25px rgba(0, 0, 0, 0.15),
@@ -610,11 +621,12 @@ ul {
     visibility: visible;
   }
 
-  .nav-links a {
+  .nav-links a,
+  .nav-pill-links a {
     width: 100%;
     font-size: 1.25rem;
     font-weight: 600;
-    color: var(--text-dark);
+    color: var(--text-dark) !important; /* Force dark text inside light background drawer */
     padding: 1rem 2rem;
     border-bottom: 1px solid #f3f4f6;
     opacity: 1;
@@ -624,24 +636,30 @@ ul {
     transition: background-color 0.2s;
     text-align: left;
     letter-spacing: normal;
+    background: transparent;
+    border-radius: 0;
   }
 
-  .nav-links a:hover {
+  .nav-links a:hover,
+  .nav-pill-links a:hover {
     background-color: #f9fafb;
-    color: var(--primary-color);
+    color: var(--primary-color) !important;
   }
 
-  .nav-links a:first-child {
+  .nav-links a:first-child,
+  .nav-pill-links a:first-child {
     border-top: 1px solid #f3f4f6;
   }
 
   /* Reset staggered animations */
-  .nav-links.active a {
+  .nav-links.active a,
+  .nav-pill-links.active a {
     opacity: 1;
     transform: none;
   }
 
-  .nav-links.active a:nth-child(n) {
+  .nav-links.active a:nth-child(n),
+  .nav-pill-links.active a:nth-child(n) {
     transition-delay: 0s;
   }
 
@@ -665,7 +683,8 @@ ul {
     transform: none;
   }
 
-  .nav-links a::after {
+  .nav-links a::after,
+  .nav-pill-links a::after {
     display: none;
   }
 
@@ -881,8 +900,8 @@ ul {
   }
 
   .hero-visual {
-    height: 300px;
-    margin-top: -2rem;
+    height: auto;
+    margin-top: 2rem;
   }
 
   .tech-grid {
@@ -997,6 +1016,11 @@ ul {
     margin-right: auto;
   }
   
+  .hero-corporate .hero-visual {
+    height: auto;
+    margin-top: 2.5rem;
+  }
+
   .stat-grid-glass {
     max-width: 600px;
     margin: 0 auto;
@@ -1892,14 +1916,7 @@ ul {
 
 /* 1. About Hero */
 .about-hero {
-  background: linear-gradient(-45deg, #0B2B35, #16657A, #0F4C5C, #0B2B35);
-  background-size: 400% 400%;
-  color: white;
-  padding: 8rem 2rem 6rem;
-  text-align: center;
-  position: relative;
-  overflow: hidden;
-  animation: gradientBG 15s ease infinite;
+  /* Inherits unified corporate-hero styles */
 }
 
 .about-hero h1 {
@@ -2603,18 +2620,24 @@ ul {
   transform: translateY(-2px);
 }
 
-/* 1. Page Hero */
-.corporate-hero {
-  padding: 180px 0 120px;
-  /* Dark Tech Gradient Background similar to home hero */
-  background:
-    radial-gradient(circle at 10% 20%, rgba(236, 82, 36, 0.1) 0%, transparent 40%),
-    radial-gradient(circle at 90% 80%, rgba(187, 178, 138, 0.1) 0%, transparent 40%),
-    linear-gradient(135deg, #0d3c49 0%, #16657A 100%);
-  color: white;
-  text-align: center;
+/* 1. Page Hero - Unified Corporate Page Banner */
+.corporate-hero,
+.about-hero,
+.support-hero,
+.quote-hero,
+.product-hero {
+  padding: 180px 1.5rem 100px;
+  background-image: 
+    linear-gradient(rgba(11, 43, 53, 0.88), rgba(11, 43, 53, 0.94)), 
+    url("/hero-corporate.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   position: relative;
   overflow: hidden;
+  color: white;
+  text-align: center;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.05);
 }
 
 /* Tech Grid Pattern Overlay */
@@ -2923,6 +2946,18 @@ ul {
   grid-template-columns: repeat(3, 1fr);
   gap: 2rem;
   margin-top: 3rem;
+}
+
+@media (max-width: 992px) {
+  .corporate-services-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .corporate-services-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .corporate-card {
@@ -3255,6 +3290,12 @@ ul {
   width: 100%;
 }
 
+@media (max-width: 992px) {
+  .corporate-suite-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 .corporate-cluster {
   background: var(--bg-white);
   border: 1px solid rgba(0, 0, 0, 0.05);
@@ -3358,6 +3399,18 @@ ul {
   gap: 2rem;
   margin-bottom: 4rem;
   margin-top: 3rem;
+}
+
+@media (max-width: 992px) {
+  .corporate-arch-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .corporate-arch-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .corporate-arch-node {
@@ -3608,6 +3661,18 @@ ul {
   margin-top: 3rem;
 }
 
+@media (max-width: 992px) {
+  .corporate-industries-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .corporate-industries-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 .corporate-industry-card {
   background: var(--bg-light);
   border: 1px solid rgba(0, 0, 0, 0.05);
@@ -3783,14 +3848,7 @@ ul {
 }
 
 .support-hero {
-  background: linear-gradient(-45deg, #0B2B35, #16657A, #0F4C5C, #0B2B35);
-  background-size: 400% 400%;
-  color: white;
-  padding: 8rem 2rem 6rem;
-  text-align: center;
-  position: relative;
-  overflow: hidden;
-  animation: gradientBG 15s ease infinite;
+  /* Inherits unified corporate-hero styles */
 }
 
 .support-hero .hero-container {
@@ -4581,12 +4639,7 @@ ul {
 }
 
 .quote-hero {
-  background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-  color: white;
-  padding: 6rem 1rem 4rem;
-  text-align: center;
-  position: relative;
-  overflow: hidden;
+  /* Inherits unified corporate-hero styles */
 }
 
 .quote-hero::before {
@@ -5156,6 +5209,11 @@ body {
 .sidebar-link:hover {
   background: rgba(255, 255, 255, 0.1);
   color: white;
+}
+
+.sidebar-sublink:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: white !important;
 }
 
 .sidebar-link.active {
@@ -6853,13 +6911,23 @@ body {
     transition: max-height 0.3s ease;
   }
 
-  .nav-links.active .dropdown-menu {
+  .nav-links.active .dropdown-menu,
+  .nav-pill-links.active .dropdown-menu {
     max-height: 300px;
   }
 
-  .dropdown-menu a {
-    color: white !important;
+  .nav-links.active .dropdown-menu a,
+  .nav-pill-links.active .dropdown-menu a {
+    color: var(--text-dark) !important;
     padding: 0.5rem 0 !important;
+    font-size: 1.1rem;
+    font-weight: 500;
+  }
+
+  .nav-links.active .dropdown-menu a:hover,
+  .nav-pill-links.active .dropdown-menu a:hover {
+    color: var(--primary-color) !important;
+    background: transparent !important;
   }
 }
 
@@ -6957,5 +7025,24 @@ body {
   color: var(--secondary-color) !important;
 }
 
+/* =========================================
+   RESPONSIVE TABLE WRAPPER ARCHITECTURE
+   ========================================= */
+.table-responsive {
+  display: block;
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin-bottom: 1.5rem;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
 
-
+.table-responsive table {
+  width: 100% !important;
+  min-width: 650px; /* Force table to maintain width so it scrolls beautifully on mobile drawer */
+  border-collapse: collapse;
+}
+
+
+

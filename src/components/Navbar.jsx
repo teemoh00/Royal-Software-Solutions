@@ -45,6 +45,7 @@ const Navbar = () => {
                         </Link>
                         <div className="dropdown-menu">
                             <Link to="/fahari-academia" onClick={() => setIsMenuOpen(false)}>Fahari Academia</Link>
+                            <Link to="/fahari-nexus" onClick={() => setIsMenuOpen(false)}>Fahari Nexus</Link>
                             <Link to="/fahari-ledger" onClick={() => setIsMenuOpen(false)}>Fahari Ledger</Link>
                             <div className="dropdown-divider"></div>
                             <Link to="/products-services" className="view-all" onClick={() => setIsMenuOpen(false)}>All Solutions</Link>
@@ -57,7 +58,7 @@ const Navbar = () => {
 
                 <div className="nav-pill-actions">
                     <Link to="/login" className="btn-pill-login desktop-only">New Ticket</Link>
-                    <Link to="/get-quote" className="btn-pill-primary">Get Started</Link>
+                    <Link to="/get-quote" className="btn-pill-primary">Get a Demo</Link>
                     
                     <button className="menu-toggle" onClick={() => setIsMenuOpen(!isMenuOpen)} style={{ color: 'white' }}>
                         {isMenuOpen ? <X /> : <Menu />}

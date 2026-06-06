@@ -274,7 +274,7 @@ const TicketListSection = ({ tickets, onViewTicket }) => (
                 <button style={{ padding: '10px', borderRadius: '10px', border: '1px solid #e2e8f0', background: 'white' }}><Filter size={18} /></button>
             </div>
         </div>
-        <div style={{ overflowX: 'auto' }}>
+        <div className="table-responsive">
             <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
                 <thead>
                     <tr style={{ borderBottom: '2px solid #f1f5f9' }}>
@@ -616,7 +616,7 @@ const SupportPerformanceSection = () => (
 
         <div className="portal-content-card" style={{ padding: '25px' }}>
             <h3 style={{ margin: '0 0 20px 0' }}>Support Team Leaderboard</h3>
-            <div style={{ overflowX: 'auto' }}>
+            <div className="table-responsive">
                 <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
                     <thead>
                         <tr style={{ borderBottom: '2px solid #f1f5f9' }}>

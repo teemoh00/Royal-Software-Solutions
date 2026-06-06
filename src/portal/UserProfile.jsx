@@ -1,4 +1,5 @@
-import { useState, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { apiClient } from '../services/apiClient';
 import {
     User, Mail, Phone, MapPin, Briefcase, Building,
     Shield, Key, Bell, Globe, Moon, Sun,
@@ -43,10 +44,70 @@ const personalFiles = [
     { id: 3, name: "Profile_Backup_Settings.json", size: "45 KB", date: "2026-02-28" }
 ];
 
+
+
 const UserProfile = () => {
     const [view, setView] = useState('overview'); // overview, editing, security, preferences, activity, files, api
     const [darkMode, setDarkMode] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
+
+    const [profile, setProfile] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+
+    const loadProfile = async () => {
+        setLoading(true);
+        try {
+            const data = await apiClient.profile.get();
+            setProfile({
+                ...userData,
+                ...data,
+                fullName: data.first_name || data.last_name ? `${data.first_name || ''} ${data.last_name || ''}`.trim() : userData.fullName,
+                email: data.email || userData.email,
+                phone: data.phone || data.cell_phone || userData.phone,
+                bio: data.bio || data.about || userData.bio,
+                role: data.is_superuser ? 'Super Admin' : data.is_staff ? 'Admin' : 'Staff'
+            });
+            setError(null);
+        } catch (err) {
+            console.error("Failed to load profile:", err);
+            setError("Failed to sync profile with ERP backend.");
+            setProfile(userData);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        loadProfile();
+    }, []);
+
+    const handleProfileUpdate = async (formData) => {
+        setLoading(true);
+        try {
+            const payload = {
+                first_name: formData.fullName.split(' ')[0] || '',
+                last_name: formData.fullName.split(' ').slice(1).join(' ') || '',
+                cell_phone: formData.phone,
+                about: formData.bio
+            };
+            const updated = await apiClient.put('/api/v1/profile/', payload);
+            setProfile(prev => ({
+                ...prev,
+                ...updated,
+                fullName: updated.first_name || updated.last_name ? `${updated.first_name || ''} ${updated.last_name || ''}`.trim() : prev.fullName,
+                phone: updated.phone || updated.cell_phone || prev.phone,
+                bio: updated.bio || updated.about || prev.bio
+            }));
+            setView('overview');
+            setError(null);
+        } catch (err) {
+            console.error("Failed to update profile:", err);
+            setError(err.message || "Failed to update profile settings.");
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return (
         <div className="profile-main-container portal-module animations-fade-in">
@@ -102,9 +163,9 @@ const UserProfile = () => {
                                 <Camera size={14} color="#6366f1" />
                             </button>
                         </div>
-                        <h3 style={{ margin: '0 0 5px 0' }}>{userData.fullName}</h3>
-                        <p style={{ margin: 0, fontSize: '14px', color: '#64748b' }}>{userData.jobTitle}</p>
-                        <span style={{ display: 'inline-block', marginTop: '10px', fontSize: '11px', fontWeight: 700, padding: '4px 12px', borderRadius: '20px', background: '#ecfdf5', color: '#10b981' }}>{userData.role}</span>
+                        <h3 style={{ margin: '0 0 5px 0' }}>{profile?.fullName || userData.fullName}</h3>
+                        <p style={{ margin: 0, fontSize: '14px', color: '#64748b' }}>{profile?.jobTitle || userData.jobTitle}</p>
+                        <span style={{ display: 'inline-block', marginTop: '10px', fontSize: '11px', fontWeight: 700, padding: '4px 12px', borderRadius: '20px', background: '#ecfdf5', color: '#10b981' }}>{profile?.role || userData.role}</span>
                     </div>
 
                     <div className="portal-content-card" style={{ padding: '10px' }}>
@@ -129,13 +190,20 @@ const UserProfile = () => {
 
                 {/* Main Content Area */}
                 <div className="profile-content">
-                    {view === 'overview' && <ProfileOverview onEdit={() => setView('editing')} />}
-                    {view === 'editing' && <ProfileEditForm onCancel={() => setView('overview')} />}
-                    {view === 'security' && <SecuritySettings />}
-                    {view === 'preferences' && <UserPreferences />}
-                    {view === 'activity' && <ActivitySection />}
-                    {view === 'files' && <FilesSection />}
-                    {view === 'api' && <ApiAccessSection />}
+                    {loading && <div style={{ padding: '20px', textAlign: 'center', color: '#64748b' }}>Syncing profile...</div>}
+                    {error && <div style={{ padding: '12px', background: '#fef2f2', color: '#ef4444', borderRadius: '8px', marginBottom: '15px' }}>{error}</div>}
+                    
+                    {profile && (
+                        <>
+                            {view === 'overview' && <ProfileOverview profile={profile} onEdit={() => setView('editing')} />}
+                            {view === 'editing' && <ProfileEditForm profile={profile} onCancel={() => setView('overview')} onSave={handleProfileUpdate} />}
+                            {view === 'security' && <SecuritySettings />}
+                            {view === 'preferences' && <UserPreferences />}
+                            {view === 'activity' && <ActivitySection />}
+                            {view === 'files' && <FilesSection />}
+                            {view === 'api' && <ApiAccessSection />}
+                        </>
+                    )}
                 </div>
             </div>
         </div>
@@ -171,7 +239,7 @@ const MobileNavBtn = ({ icon, active, onClick }) => (
     </button>
 );
 
-const ProfileOverview = ({ onEdit }) => (
+const ProfileOverview = ({ profile, onEdit }) => (
     <div className="animations-fade-in">
         <div className="portal-content-card" style={{ padding: '30px', marginBottom: '25px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '25px' }}>
@@ -182,17 +250,17 @@ const ProfileOverview = ({ onEdit }) => (
             </div>
 
             <div className="profile-info-grid">
-                <DetailItem label="Full Name" value={userData.fullName} icon={<User size={16} />} />
-                <DetailItem label="Email Address" value={userData.email} icon={<Mail size={16} />} />
-                <DetailItem label="Phone Number" value={userData.phone} icon={<Phone size={16} />} />
-                <DetailItem label="Username" value={userData.username} icon={<User size={16} />} />
-                <DetailItem label="Department" value={userData.department} icon={<Building size={16} />} />
-                <DetailItem label="Address" value={userData.address} icon={<MapPin size={16} />} />
+                <DetailItem label="Full Name" value={profile.fullName} icon={<User size={16} />} />
+                <DetailItem label="Email Address" value={profile.email} icon={<Mail size={16} />} />
+                <DetailItem label="Phone Number" value={profile.phone} icon={<Phone size={16} />} />
+                <DetailItem label="Username" value={profile.username} icon={<User size={16} />} />
+                <DetailItem label="Department" value={profile.department} icon={<Building size={16} />} />
+                <DetailItem label="Address" value={profile.address} icon={<MapPin size={16} />} />
             </div>
 
             <div style={{ marginTop: '30px', borderTop: '1px solid #f1f5f9', paddingTop: '25px' }}>
                 <h4 style={{ margin: '0 0 10px 0', fontSize: '14px', color: '#64748b' }}>About Me</h4>
-                <p style={{ fontSize: '14px', lineHeight: '1.6', color: '#1e293b', margin: 0 }}>{userData.bio}</p>
+                <p style={{ fontSize: '14px', lineHeight: '1.6', color: '#1e293b', margin: 0 }}>{profile.bio}</p>
             </div>
         </div>
 
@@ -200,7 +268,7 @@ const ProfileOverview = ({ onEdit }) => (
             <div className="portal-content-card" style={{ padding: '25px' }}>
                 <h4 style={{ margin: '0 0 15px 0' }}>Professional Skills</h4>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                    {userData.skills.map(skill => (
+                    {(profile.skills || []).map(skill => (
                         <span key={skill} style={{ padding: '6px 14px', borderRadius: '10px', background: '#f1f5f9', color: '#475569', fontSize: '13px', fontWeight: 600 }}>{skill}</span>
                     ))}
                 </div>
@@ -208,7 +276,7 @@ const ProfileOverview = ({ onEdit }) => (
             <div className="portal-content-card" style={{ padding: '25px' }}>
                 <h4 style={{ margin: '0 0 15px 0' }}>Certifications</h4>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                    {userData.certifications.map(cert => (
+                    {(profile.certifications || []).map(cert => (
                         <div key={cert} style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#1e293b', fontSize: '14px' }}>
                             <CheckCircle size={16} color="#10b981" /> {cert}
                         </div>
@@ -229,30 +297,57 @@ const DetailItem = ({ label, value, icon }) => (
     </div>
 );
 
-const ProfileEditForm = ({ onCancel }) => (
-    <div className="portal-content-card animations-fade-in" style={{ padding: '30px' }}>
-        <h3 style={{ margin: '0 0 25px 0' }}>Edit Personal Information</h3>
-        <form className="edit-form-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-            <InputField label="Full Name" defaultValue={userData.fullName} />
-            <InputField label="Email Address" defaultValue={userData.email} />
-            <InputField label="Phone Number" defaultValue={userData.phone} />
-            <InputField label="Address" defaultValue={userData.address} />
-            <InputField label="Job Title" defaultValue={userData.jobTitle} disabled />
-            <InputField label="Department" defaultValue={userData.department} disabled />
+const ProfileEditForm = ({ profile, onCancel, onSave }) => {
+    const [fullName, setFullName] = useState(profile.fullName || '');
+    const [email, setEmail] = useState(profile.email || '');
+    const [phone, setPhone] = useState(profile.phone || '');
+    const [address, setAddress] = useState(profile.address || '');
+    const [bio, setBio] = useState(profile.bio || '');
 
-            <div style={{ gridColumn: 'span 2' }}>
-                <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: '#64748b', marginBottom: '8px' }}>Bio / About Me</label>
-                <textarea
-                    defaultValue={userData.bio}
-                    style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0', minHeight: '100px', fontSize: '14px' }}
-                ></textarea>
-            </div>
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        onSave({ fullName, email, phone, address, bio });
+    };
 
-            <div style={{ gridColumn: 'span 2', display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '10px' }}>
-                <button type="button" onClick={onCancel} className="btn-outline" style={{ padding: '10px 25px' }}>Cancel</button>
-                <button type="submit" className="btn-primary" style={{ padding: '10px 25px' }}>Save Changes</button>
-            </div>
-        </form>
+    return (
+        <div className="portal-content-card animations-fade-in" style={{ padding: '30px' }}>
+            <h3 style={{ margin: '0 0 25px 0' }}>Edit Personal Information</h3>
+            <form onSubmit={handleSubmit} className="edit-form-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+                <EditInputField label="Full Name" value={fullName} onChange={e => setFullName(e.target.value)} />
+                <EditInputField label="Email Address" value={email} onChange={e => setEmail(e.target.value)} disabled />
+                <EditInputField label="Phone Number" value={phone} onChange={e => setPhone(e.target.value)} />
+                <EditInputField label="Address" value={address} onChange={e => setAddress(e.target.value)} />
+                <EditInputField label="Job Title" value={profile.jobTitle} disabled />
+                <EditInputField label="Department" value={profile.department} disabled />
+
+                <div style={{ gridColumn: 'span 2' }}>
+                    <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: '#64748b', marginBottom: '8px' }}>Bio / About Me</label>
+                    <textarea
+                        value={bio}
+                        onChange={e => setBio(e.target.value)}
+                        style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0', minHeight: '100px', fontSize: '14px', background: 'white' }}
+                    ></textarea>
+                </div>
+
+                <div style={{ gridColumn: 'span 2', display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '10px' }}>
+                    <button type="button" onClick={onCancel} className="btn-outline" style={{ padding: '10px 25px' }}>Cancel</button>
+                    <button type="submit" className="btn-primary" style={{ padding: '10px 25px' }}>Save Changes</button>
+                </div>
+            </form>
+        </div>
+    );
+};
+
+const EditInputField = ({ label, value, onChange, type = "text", disabled = false }) => (
+    <div>
+        <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: '#64748b', marginBottom: '8px' }}>{label}</label>
+        <input
+            type={type}
+            value={value || ''}
+            onChange={onChange}
+            disabled={disabled}
+            style={{ width: '100%', padding: '10px 15px', borderRadius: '10px', border: '1px solid #e2e8f0', background: disabled ? '#f8fafc' : 'white', fontSize: '14px' }}
+        />
     </div>
 );
 
@@ -385,26 +480,28 @@ const ActivitySection = () => (
     <div className="animations-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '25px' }}>
         <div className="portal-content-card" style={{ padding: '25px' }}>
             <h3 style={{ margin: '0 0 20px 0' }}>Recent Login History</h3>
-            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
-                <thead>
-                    <tr style={{ borderBottom: '2px solid #f1f5f9' }}>
-                        <th style={{ padding: '12px', fontSize: '13px', color: '#64748b' }}>Date & Time</th>
-                        <th style={{ padding: '12px', fontSize: '13px', color: '#64748b' }}>Device / Browser</th>
-                        <th style={{ padding: '12px', fontSize: '13px', color: '#64748b' }}>IP Address</th>
-                        <th style={{ padding: '12px', fontSize: '13px', color: '#64748b' }}>Location</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {loginActivity.map((log, i) => (
-                        <tr key={i} style={{ borderBottom: '1px solid #f1f5f9' }}>
-                            <td style={{ padding: '15px', fontSize: '14px' }}>{log.date}</td>
-                            <td style={{ padding: '15px', fontSize: '14px' }}>{log.device} • {log.browser}</td>
-                            <td style={{ padding: '15px', fontSize: '14px', fontFamily: 'monospace' }}>{log.ip}</td>
-                            <td style={{ padding: '15px', fontSize: '14px' }}>{log.location}</td>
+            <div className="table-responsive">
+                <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+                    <thead>
+                        <tr style={{ borderBottom: '2px solid #f1f5f9' }}>
+                            <th style={{ padding: '12px', fontSize: '13px', color: '#64748b' }}>Date & Time</th>
+                            <th style={{ padding: '12px', fontSize: '13px', color: '#64748b' }}>Device / Browser</th>
+                            <th style={{ padding: '12px', fontSize: '13px', color: '#64748b' }}>IP Address</th>
+                            <th style={{ padding: '12px', fontSize: '13px', color: '#64748b' }}>Location</th>
                         </tr>
-                    ))}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        {loginActivity.map((log, i) => (
+                            <tr key={i} style={{ borderBottom: '1px solid #f1f5f9' }}>
+                                <td style={{ padding: '15px', fontSize: '14px' }}>{log.date}</td>
+                                <td style={{ padding: '15px', fontSize: '14px' }}>{log.device} • {log.browser}</td>
+                                <td style={{ padding: '15px', fontSize: '14px', fontFamily: 'monospace' }}>{log.ip}</td>
+                                <td style={{ padding: '15px', fontSize: '14px' }}>{log.location}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
         </div>
 
         <div className="portal-content-card" style={{ padding: '25px' }}>

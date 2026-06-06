@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import Home from './components/Home'
 import About from './components/About'
@@ -10,7 +10,10 @@ import Register from './components/Register'
 import GetQuote from './components/GetQuote'
 import FahariAcademia from './components/FahariAcademia'
 import FahariLedger from './components/FahariLedger'
+import FahariNexus from './components/FahariNexus'
 import Footer from './components/Footer'
+
+// Admin / Staff Portal
 import PortalLayout from './portal/PortalLayout'
 import Dashboard from './portal/Dashboard'
 import FinanceAccounting from './portal/FinanceAccounting'
@@ -21,6 +24,13 @@ import HRStaff from './portal/HRStaff'
 import ClientManagement from './portal/ClientManagement'
 import UserProfile from './portal/UserProfile'
 import SettingsPage from './portal/Settings'
+
+// Client Portal
+import ClientPortalLayout from './portal/ClientPortalLayout'
+import ClientDashboard from './portal/ClientDashboard'
+import ClientProjects from './portal/ClientProjects'
+import ClientBilling from './portal/ClientBilling'
+import ClientSupport from './portal/ClientSupport'
 
 import { useLocation } from 'react-router-dom'
 
@@ -47,9 +57,15 @@ function AppContent() {
         <Route path="/get-quote" element={<GetQuote />} />
         <Route path="/fahari-academia" element={<FahariAcademia />} />
         <Route path="/fahari-ledger" element={<FahariLedger />} />
+        <Route path="/fahari-nexus" element={<FahariNexus />} />
 
-        {/* Portal Routes */}
-        <Route path="/portal" element={<PortalLayout />}>
+        {/* Legacy redirect - /portal goes to admin dashboard */}
+        <Route path="/portal" element={<Navigate to="/portal/admin/dashboard" replace />} />
+        <Route path="/portal/dashboard" element={<Navigate to="/portal/admin/dashboard" replace />} />
+
+        {/* Admin / Staff Portal Routes */}
+        <Route path="/portal/admin" element={<PortalLayout />}>
+          <Route index element={<Navigate to="dashboard" replace />} />
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="finance" element={<FinanceAccounting />} />
           <Route path="hr" element={<HRStaff />} />
@@ -60,11 +76,21 @@ function AppContent() {
           <Route path="profile" element={<UserProfile />} />
           <Route path="settings" element={<SettingsPage />} />
         </Route>
+
+        {/* Client Portal Routes */}
+        <Route path="/portal/client" element={<ClientPortalLayout />}>
+          <Route index element={<Navigate to="dashboard" replace />} />
+          <Route path="dashboard" element={<ClientDashboard />} />
+          <Route path="projects" element={<ClientProjects />} />
+          <Route path="billing" element={<ClientBilling />} />
+          <Route path="support" element={<ClientSupport />} />
+          <Route path="profile" element={<UserProfile />} />
+        </Route>
       </Routes>
       {showFooter && <Footer />}
       {showWhatsApp && (
         <a
-          href="https://wa.me/254759437978?text=Hi%2C%20I%27d%20like%20to%20learn%20more%20about%20your%20software%20solutions."
+          href="https://wa.me/254759437978?text=Hi%2C%20I%27d%20like%20to%20learn%20more%20about%20Fahari."
           target="_blank"
           rel="noopener noreferrer"
           className="whatsapp-float"

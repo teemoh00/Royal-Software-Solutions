@@ -579,7 +579,7 @@ const ProjectListSection = ({ projects, onSelectProject }) => {
                 </div>
             </div>
 
-            <div style={{ overflowX: 'auto' }}>
+            <div className="table-responsive">
                 <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
                     <thead>
                         <tr style={{ borderBottom: '2px solid #f1f5f9' }}>

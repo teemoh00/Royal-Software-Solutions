@@ -31,10 +31,10 @@ const Services = () => {
         {
             icon: <Network size={32} />,
             title: "Fahari Nexus",
-            desc: "Centralized communication and collaboration hub for institutions and enterprises.",
-            features: ["Smart Connect", "Unified Comms"],
+            desc: "Business operations and ERP for SMEs and enterprises — sales, inventory, procurement, and financial workflows, connected and live.",
+            features: ["Sales & CRM", "Inventory & LPO", "Approvals Flow"],
             size: "bento-sm",
-            link: "/products-services"
+            link: "/fahari-nexus"
         },
         {
             icon: <Ticket size={32} />,

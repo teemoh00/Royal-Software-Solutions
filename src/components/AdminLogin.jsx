@@ -1,22 +1,30 @@
 import { useState } from 'react'
 import { ShieldAlert, Lock, User, Eye, EyeOff, Terminal, Key } from 'lucide-react'
 import { Link, useNavigate } from 'react-router-dom'
+import { apiClient } from '../services/apiClient'
 
 const AdminLogin = () => {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [showPassword, setShowPassword] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
+    const [error, setError] = useState('')
     const navigate = useNavigate()
 
-    const handleAdminLogin = (e) => {
+    const handleAdminLogin = async (e) => {
         e.preventDefault()
         setIsLoading(true)
-        // Simulate high-security authentication
-        setTimeout(() => {
+        setError('')
+        
+        try {
+            await apiClient.auth.login(email, password)
+            navigate('/portal/admin/dashboard')
+        } catch (err) {
+            console.error('Admin Login Error:', err)
+            setError(err.message || 'Authentication failed. Please check credentials.')
+        } finally {
             setIsLoading(false)
-            navigate('/portal/dashboard')
-        }, 2000)
+        }
     }
 
     return (
@@ -35,6 +43,12 @@ const AdminLogin = () => {
                         <h2>EXECUTIVE TERMINAL</h2>
                         <p>RESTRICTED ACCESS AREA</p>
                     </div>
+
+                    {error && (
+                        <div className="auth-error-msg" style={{ background: 'rgba(239, 68, 68, 0.15)', border: '1px solid #ef4444', color: '#f87171', padding: '10px', borderRadius: '8px', fontSize: '13px', marginBottom: '15px', textAlign: 'center' }}>
+                            {error}
+                        </div>
+                    )}
 
                     <form onSubmit={handleAdminLogin} className="admin-login-form">
                         <div className="admin-input-group">

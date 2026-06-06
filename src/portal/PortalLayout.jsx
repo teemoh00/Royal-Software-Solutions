@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
+import { useCompany } from '../services/CompanyContext';
+import { apiClient } from '../services/apiClient';
 import {
     LayoutDashboard,
     MessageSquare,
@@ -15,18 +17,37 @@ import {
     Search,
     Briefcase,
     Building,
-    UserCircle
+    UserCircle,
+    ChevronDown,
+    ChevronRight,
+    CircleDot
 } from 'lucide-react';
 
 const PortalLayout = () => {
     const [sidebarOpen, setSidebarOpen] = useState(true);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
-    // Simulate User Role & Notification State for Phase 1
-    const [userRole, setUserRole] = useState('Admin'); // Can be 'Admin', 'Finance', 'Sales', 'Support'
+    const [userRole, setUserRole] = useState('Admin');
     const [showNotifications, setShowNotifications] = useState(false);
+    const [adminName, setAdminName] = useState('Administrator');
+    const [expandedNav, setExpandedNav] = useState('/portal/admin/sales');
 
+    const { company } = useCompany();
     const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    const viewParam = queryParams.get('view');
+
+    // Load logged-in user name
+    useEffect(() => {
+        const user = apiClient.auth.getCurrentUser();
+        if (user) {
+            const name = user.full_name ||
+                `${user.first_name || ''} ${user.last_name || ''}`.trim() ||
+                user.username || 'Administrator';
+            setAdminName(name);
+            if (user.is_superuser) setUserRole('Admin');
+            else if (user.is_staff) setUserRole('Admin');
+        }
+    }, []);
 
     // Auto-close mobile drawer & dropdowns on route change
     useEffect(() => {
@@ -57,19 +78,35 @@ const PortalLayout = () => {
         }
     };
 
-    const isActive = (path) => {
-        return location.pathname === path ? 'active' : '';
+    const isActive = (path, subView = null) => {
+        if (subView) {
+            return location.pathname === path && viewParam === subView ? 'active' : '';
+        }
+        return location.pathname === path && !viewParam ? 'active' : '';
     };
 
     // --- Role Based Navigation Layout ---
     const navLinks = [
-        { path: '/portal/dashboard', icon: <LayoutDashboard size={20} />, label: 'Dashboard', roles: ['Admin', 'Finance', 'Sales', 'Support', 'Client'] },
-        { path: '/portal/projects', icon: <Briefcase size={20} />, label: 'Project Management', roles: ['Admin', 'Client'] },
-        { path: '/portal/finance', icon: <DollarSign size={20} />, label: 'Finance & Accounting', roles: ['Admin', 'Finance', 'Client'] },
-        { path: '/portal/hr', icon: <UserCircle size={20} />, label: 'HR & Staff', roles: ['Admin'] },
-        { path: '/portal/sales', icon: <Users size={20} />, label: 'Sales Management', roles: ['Admin', 'Sales'] },
-        { path: '/portal/clients', icon: <Building size={20} />, label: 'Client Management', roles: ['Admin', 'Sales'] },
-        { path: '/portal/support-tickets', icon: <Headset size={20} />, label: 'Support Tickets', roles: ['Admin', 'Support', 'Client'] }
+        { path: '/portal/admin/dashboard', icon: <LayoutDashboard size={20} />, label: 'Dashboard', roles: ['Admin', 'Finance', 'Sales', 'Support'] },
+        { path: '/portal/admin/projects', icon: <Briefcase size={20} />, label: 'Project Management', roles: ['Admin'] },
+        { path: '/portal/admin/finance', icon: <DollarSign size={20} />, label: 'Finance & Accounting', roles: ['Admin', 'Finance'] },
+        { path: '/portal/admin/hr', icon: <UserCircle size={20} />, label: 'HR & Staff', roles: ['Admin'] },
+        { 
+            path: '/portal/admin/sales', icon: <Users size={20} />, label: 'Sales Management', roles: ['Admin', 'Sales'],
+            subLinks: [
+                { view: 'dashboard', label: 'Overview' },
+                { view: 'sales_registry', label: 'Sales Registry' },
+                { view: 'leads', label: 'Leads' },
+                { view: 'pipeline', label: 'Pipeline' },
+                { view: 'deals', label: 'Deals' },
+                { view: 'quotations', label: 'Quotations' },
+                { view: 'activities', label: 'Activities' },
+                { view: 'reports', label: 'Reports' },
+                { view: 'documents', label: 'Documents' }
+            ]
+        },
+        { path: '/portal/admin/clients', icon: <Building size={20} />, label: 'Client Management', roles: ['Admin', 'Sales'] },
+        { path: '/portal/admin/support-tickets', icon: <Headset size={20} />, label: 'Support Tickets', roles: ['Admin', 'Support'] }
     ];
 
     const filteredLinks = navLinks.filter(link => link.roles.includes(userRole));
@@ -79,38 +116,87 @@ const PortalLayout = () => {
             {/* Sidebar */}
             <aside className={`portal-sidebar ${sidebarOpen ? 'open' : 'closed'} ${mobileMenuOpen ? 'mobile-open' : ''}`}>
                 <div className="sidebar-header">
-                    <Link to="/portal/dashboard" className="sidebar-logo">
-                        <img src="/logo (2).png" alt="Royal Software Solutions" className="sidebar-logo-img" />
-                        <span className={`sidebar-logo-text ${(sidebarOpen || mobileMenuOpen) ? 'visible' : 'hidden'}`}>Royal Portal</span>
+                    <Link to="/portal/admin/dashboard" className="sidebar-logo">
+                        <img
+                            src={company.logo || '/logo (2).png'}
+                            alt={company.name}
+                            className="sidebar-logo-img"
+                            onError={(e) => { e.target.src = '/logo (2).png'; }}
+                        />
+                        <span className={`sidebar-logo-text ${(sidebarOpen || mobileMenuOpen) ? 'visible' : 'hidden'}`}>
+                            {company.name || 'Staff Portal'}
+                        </span>
                     </Link>
-                    {window.innerWidth <= 1024 && (
-                        <button className="mobile-close-btn" onClick={() => setMobileMenuOpen(false)}>
-                            <X size={24} />
-                        </button>
-                    )}
+                    <button className="mobile-close-btn" onClick={() => setMobileMenuOpen(false)}>
+                        <X size={24} />
+                    </button>
                 </div>
 
                 <div className="sidebar-nav-container">
                     <p className={`sidebar-label ${(sidebarOpen || mobileMenuOpen) ? 'visible' : 'hidden'}`}>CORE MODULES {userRole !== 'Admin' && `(${userRole})`}</p>
                     <nav className="sidebar-nav">
                         {filteredLinks.map((link) => (
-                            <Link key={link.path} to={link.path} className={`sidebar-link ${isActive(link.path)}`} title={link.label}>
-                                {link.icon}
-                                <span className={(sidebarOpen || mobileMenuOpen) ? 'visible' : 'hidden'}>{link.label}</span>
-                            </Link>
+                            <div key={link.path}>
+                                {link.subLinks ? (
+                                    <div 
+                                        className={`sidebar-link ${location.pathname === link.path ? 'active-parent' : ''}`} 
+                                        onClick={() => setExpandedNav(expandedNav === link.path ? null : link.path)}
+                                        style={{ cursor: 'pointer', justifyContent: 'space-between' }}
+                                    >
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                                            {link.icon}
+                                            <span className={(sidebarOpen || mobileMenuOpen) ? 'visible' : 'hidden'}>{link.label}</span>
+                                        </div>
+                                        {(sidebarOpen || mobileMenuOpen) && (
+                                            expandedNav === link.path ? <ChevronDown size={16} /> : <ChevronRight size={16} />
+                                        )}
+                                    </div>
+                                ) : (
+                                    <Link to={link.path} className={`sidebar-link ${isActive(link.path)}`} title={link.label}>
+                                        {link.icon}
+                                        <span className={(sidebarOpen || mobileMenuOpen) ? 'visible' : 'hidden'}>{link.label}</span>
+                                    </Link>
+                                )}
+                                
+                                {link.subLinks && expandedNav === link.path && (sidebarOpen || mobileMenuOpen) && (
+                                    <div className="sidebar-submenu animations-fade-in" style={{ marginLeft: '10px', paddingLeft: '20px', borderLeft: '1px solid rgba(255,255,255,0.1)', marginTop: '5px', marginBottom: '10px', display: 'flex', flexDirection: 'column', gap: '5px' }}>
+                                        {link.subLinks.map(sub => (
+                                            <Link 
+                                                key={sub.view} 
+                                                to={`${link.path}?view=${sub.view}`} 
+                                                className={`sidebar-sublink ${isActive(link.path, sub.view)}`}
+                                                style={{ 
+                                                    padding: '8px 12px', 
+                                                    borderRadius: '8px',
+                                                    color: isActive(link.path, sub.view) ? 'white' : '#94a3b8',
+                                                    fontSize: '13px',
+                                                    textDecoration: 'none',
+                                                    background: isActive(link.path, sub.view) ? '#6366f1' : 'transparent',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    gap: '8px'
+                                                }}
+                                            >
+                                                <CircleDot size={10} style={{ opacity: isActive(link.path, sub.view) ? 1 : 0.5 }} />
+                                                {sub.label}
+                                            </Link>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
                         ))}
                     </nav>
 
                     <p className={`sidebar-label ${(sidebarOpen || mobileMenuOpen) ? 'visible' : 'hidden'}`}>ACCOUNT</p>
                     <nav className="sidebar-nav">
-                        <Link to="/portal/profile" className={`sidebar-link ${isActive('/portal/profile')}`} title="Profile">
+                        <Link to="/portal/admin/profile" className={`sidebar-link ${isActive('/portal/admin/profile')}`} title="Profile">
                             <User size={20} />
                             <span className={(sidebarOpen || mobileMenuOpen) ? 'visible' : 'hidden'}>Profile</span>
                         </Link>
 
 
 
-                        <Link to="/portal/settings" className={`sidebar-link ${isActive('/portal/settings')}`} title="Settings">
+                        <Link to="/portal/admin/settings" className={`sidebar-link ${isActive('/portal/admin/settings')}`} title="Settings">
                             <Settings size={20} />
                             <span className={(sidebarOpen || mobileMenuOpen) ? 'visible' : 'hidden'}>Settings</span>
                         </Link>
@@ -134,7 +220,7 @@ const PortalLayout = () => {
                             <Menu size={24} />
                         </button>
                         <h2 className="topbar-page-title desktop-only">
-                            {location.pathname === '/portal/dashboard' ? 'Overview' :
+                            {location.pathname === '/portal/admin/dashboard' ? 'Overview' :
                                 location.pathname.split('/').pop().replace('-', ' ').toUpperCase()}
                         </h2>
                     </div>
@@ -200,13 +286,13 @@ const PortalLayout = () => {
                         </div>
 
                         {/* User Profile Area */}
-                        <Link to="/portal/profile" className="user-profile-menu" style={{ textDecoration: 'none', color: 'inherit' }}>
+                        <Link to="/portal/admin/profile" className="user-profile-menu" style={{ textDecoration: 'none', color: 'inherit' }}>
                             <div className="user-avatar">
                                 <User size={20} />
                             </div>
                             <div className="user-info desktop-only">
-                                <span className="user-name">Jane Doe</span>
-                                <span className="user-role">{userRole}</span>
+                                <span className="user-name">{adminName}</span>
+                                <span className="user-role">{userRole} · {company.name}</span>
                             </div>
                         </Link>
 

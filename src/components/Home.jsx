@@ -3,6 +3,7 @@ import Services from './Services'
 import WhyUs from './WhyUs'
 import Testimonials from './Testimonials'
 import Industries from './Industries'
+import Manifesto from './Manifesto'
 import ContactCTA from './ContactCTA'
 import SEO from './SEO'
 
@@ -10,8 +11,8 @@ const Home = () => {
     return (
         <>
             <SEO 
-                title="Home" 
-                description="Powering African Excellence and Pride Through Technology. We build modern, scalable software solutions for schools, businesses, and institutions."
+                title="Fahari — The Institutional Operating System for Africa" 
+                description="Fahari by Royal Software Solutions is the integrated enterprise platform for African schools, businesses, SACCOs, and institutions. Built for East Africa. Live in 24 hours."
                 path="/"
             />
             <Hero />
@@ -19,6 +20,7 @@ const Home = () => {
             <WhyUs />
             <Testimonials />
             <Industries />
+            <Manifesto />
             <ContactCTA />
         </>
     )

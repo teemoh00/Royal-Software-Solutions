@@ -15,10 +15,13 @@ const FahariLedger = () => {
       {/* Hero Section */}
       <section className="product-hero ledger-hero">
         <div className="container">
-          <h1 className="hero-title">The SACCO & Microfinance Management System Built for Africa</h1>
-          <p className="hero-subtitle">Secure, transparent, and compliant management for financial cooperatives and groups.</p>
-          <div className="hero-cta">
-            <Link to="/get-quote?service=Accounting" className="btn btn-primary">Book a Demo</Link>
+          <h1 className="hero-title">Every member trusts you with their savings. Give that trust the infrastructure it deserves.</h1>
+          <p className="hero-subtitle">Fahari Ledger is the purpose-built core financial management system for SACCOs, microfinance institutions, and community cooperatives across East Africa — accurate, transparent, compliant, and built for the African cooperative context.</p>
+          <div className="hero-cta" style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+            <Link to="/get-quote?service=Accounting" className="btn btn-primary">Book a Free Demo</Link>
+            <a href="https://wa.me/254759437978?text=Hi%2C%20I%27d%20like%20to%20learn%20more%20about%20Fahari%20Ledger." className="btn btn-outline" style={{ color: 'white', borderColor: 'white', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+              WhatsApp Us Now
+            </a>
           </div>
         </div>
       </section>
@@ -87,12 +90,22 @@ const FahariLedger = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="section ledger-cta">
-        <div className="container text-center">
-          <h2>Modernize Your Financial Group Today</h2>
-          <p>Get a system that works as hard as you do.</p>
-          <br />
-          <Link to="/get-quote?service=Accounting" className="btn btn-primary">Request a Custom Quote</Link>
+      <section className="section text-white text-center" style={{ background: '#0D1B3E', padding: '6rem 2rem' }}>
+        <div className="container">
+          <h2 style={{ fontFamily: 'Playfair Display, Georgia, serif', fontSize: '2.5rem', marginBottom: '1.5rem', fontWeight: 'bold', color: 'white' }}>
+            Your members deserve a SACCO that operates at its full potential.
+          </h2>
+          <p style={{ maxWidth: '700px', margin: '0 auto 2.5rem auto', fontSize: '1.15rem', color: '#D4C5A0', lineHeight: '1.6' }}>
+            Modernize your financial group today with a core ledger system built for security, audit readiness, and member trust.
+          </p>
+          <div className="cta-actions" style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+            <Link to="/get-quote?service=Accounting" className="btn btn-pill-primary" style={{ background: '#C89B2A', borderColor: '#C89B2A', padding: '0.8rem 2.5rem', color: 'white', borderRadius: '30px', fontWeight: 'bold', textDecoration: 'none' }}>
+              Book a Free Demo
+            </Link>
+            <a href="https://wa.me/254759437978?text=Hi%2C%20I%27d%20like%20to%20learn%20more%20about%20Fahari%20Ledger." className="btn btn-primary" style={{ background: '#25D366', borderColor: '#25D366', padding: '0.8rem 2.5rem', color: 'white', borderRadius: '30px', fontWeight: 'bold', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+              WhatsApp Us Now
+            </a>
+          </div>
         </div>
       </section>
     </div>

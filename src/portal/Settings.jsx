@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { apiClient } from '../services/apiClient';
 import {
     Settings, Building, Users, Shield, Mail, CreditCard,
     Database, Activity, Lock, Globe, Bell, Save,
@@ -34,6 +35,43 @@ const systemLogs = [
 const SettingsPage = () => {
     const [activeTab, setActiveTab] = useState('general'); // general, rbac, security, email, integrations, backup, logs
     const [maintenanceMode, setMaintenanceMode] = useState(false);
+
+    const [companyInfo, setCompanyInfo] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+
+    const loadCompanyInfo = async () => {
+        setLoading(true);
+        try {
+            const data = await apiClient.company.getInfo();
+            setCompanyInfo(data);
+            setError(null);
+        } catch (err) {
+            console.error("Failed to load company info:", err);
+            setError("Failed to sync company settings with backend.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        loadCompanyInfo();
+    }, []);
+
+    const handleSaveCompanyInfo = async (updatedData) => {
+        setLoading(true);
+        try {
+            const data = await apiClient.put('/api/v1/company/', updatedData);
+            setCompanyInfo(data);
+            setError(null);
+            alert("Settings updated successfully!");
+        } catch (err) {
+            console.error("Failed to update company info:", err);
+            setError(err.message || "Failed to update company details.");
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return (
         <div className="settings-main-container portal-module animations-fade-in">
@@ -115,7 +153,12 @@ const SettingsPage = () => {
 
                 {/* Settings Content Area */}
                 <div className="settings-content">
-                    {activeTab === 'general' && <GeneralSettings />}
+                    {loading && <div style={{ padding: '20px', textAlign: 'center', color: '#64748b' }}>Syncing settings...</div>}
+                    {error && <div style={{ padding: '12px', background: '#fef2f2', color: '#ef4444', borderRadius: '8px', marginBottom: '15px' }}>{error}</div>}
+                    
+                    {activeTab === 'general' && companyInfo && (
+                        <GeneralSettings companyInfo={companyInfo} onSave={handleSaveCompanyInfo} />
+                    )}
                     {activeTab === 'rbac' && <RbacSettings />}
                     {activeTab === 'security' && <SecuritySettings />}
                     {activeTab === 'email' && <EmailSettings />}
@@ -157,34 +200,84 @@ const MobileSettingsBtn = ({ icon, active, onClick }) => (
     </button>
 );
 
-const GeneralSettings = () => (
-    <div className="animations-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '25px' }}>
-        <div className="portal-content-card" style={{ padding: '30px' }}>
-            <h3 style={{ margin: '0 0 25px 0' }}>Company Information</h3>
-            <div className="settings-form-grid">
-                <InputField label="Company Name" defaultValue="Royal Software Solutions" />
-                <InputField label="Company Email" defaultValue="admin@royalsoftwares.co.ke" />
-                <InputField label="Company Phone" defaultValue="+254 700 123 456" />
-                <InputField label="Website URL" defaultValue="https://royalsoftwares.co.ke" />
-                <div style={{ gridColumn: 'span 2' }}>
-                    <div className="settings-form-grid">
-                        <InputField label="Office Address" defaultValue="Westlands, Nairobi, Kenya" />
+const GeneralSettings = ({ companyInfo, onSave }) => {
+    const [name, setName] = useState(companyInfo?.name || '');
+    const [email, setEmail] = useState(companyInfo?.email || '');
+    const [phone, setPhone] = useState(companyInfo?.phone_number || '');
+    const [address, setAddress] = useState(companyInfo?.primary_address || '');
+    const [city, setCity] = useState(companyInfo?.city || '');
+    const [country, setCountry] = useState(companyInfo?.country || '');
+    const [taxId, setTaxId] = useState(companyInfo?.tax_id || '');
+    const [taxInclusivePricing, setTaxInclusivePricing] = useState(companyInfo?.tax_inclusive_pricing !== false);
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        onSave({
+            ...companyInfo,
+            name,
+            email,
+            phone_number: phone,
+            primary_address: address,
+            city,
+            country,
+            tax_id: taxId,
+            tax_inclusive_pricing: taxInclusivePricing
+        });
+    };
+
+    return (
+        <form onSubmit={handleSubmit} className="animations-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '25px' }}>
+            <div className="portal-content-card" style={{ padding: '30px' }}>
+                <h3 style={{ margin: '0 0 25px 0' }}>Company Information</h3>
+                <div className="settings-form-grid">
+                    <SettingsInputField label="Company Name" value={name} onChange={e => setName(e.target.value)} />
+                    <SettingsInputField label="Company Email" value={email} onChange={e => setEmail(e.target.value)} type="email" />
+                    <SettingsInputField label="Company Phone" value={phone} onChange={e => setPhone(e.target.value)} />
+                    <SettingsInputField label="Office Address" value={address} onChange={e => setAddress(e.target.value)} />
+                    <SettingsInputField label="City" value={city} onChange={e => setCity(e.target.value)} />
+                    <SettingsInputField label="Country" value={country} onChange={e => setCountry(e.target.value)} />
+                    <SettingsInputField label="Tax PIN / ID" value={taxId} onChange={e => setTaxId(e.target.value)} />
+                    
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '35px' }}>
+                        <input 
+                            type="checkbox" 
+                            id="taxInclusive" 
+                            checked={taxInclusivePricing} 
+                            onChange={e => setTaxInclusivePricing(e.target.checked)}
+                            style={{ width: '18px', height: '18px', cursor: 'pointer' }}
+                        />
+                        <label htmlFor="taxInclusive" style={{ fontSize: '13px', fontWeight: 600, color: '#475569', cursor: 'pointer' }}>
+                            Tax Inclusive Pricing
+                        </label>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div className="portal-content-card" style={{ padding: '30px' }}>
-            <h3 style={{ margin: '0 0 25px 0' }}>System Preferences</h3>
-            <div className="settings-form-grid">
-                <SelectField label="Default Currency" options={["KES (KSh)", "USD ($)", "EUR (€)", "GBP (£)"]} />
-                <SelectField label="Time Zone" options={["(GMT+03:00) Nairobi", "(GMT+00:00) UTC", "(GMT-05:00) EST"]} />
-                <SelectField label="Language" options={["English", "Swahili", "French"]} />
-                <SelectField label="Date Format" options={["DD/MM/YYYY", "MM/DD/YYYY", "YYYY-MM-DD"]} />
+            <div className="portal-content-card" style={{ padding: '30px' }}>
+                <h3 style={{ margin: '0 0 25px 0' }}>System Preferences</h3>
+                <div className="settings-form-grid">
+                    <SelectField label="Default Currency" options={["KES (KSh)", "USD ($)", "EUR (€)", "GBP (£)"]} />
+                    <SelectField label="Time Zone" options={["(GMT+03:00) Nairobi", "(GMT+00:00) UTC", "(GMT-05:00) EST"]} />
+                    <SelectField label="Language" options={["English", "Swahili", "French"]} />
+                    <SelectField label="Date Format" options={["DD/MM/YYYY", "MM/DD/YYYY", "YYYY-MM-DD"]} />
+                </div>
             </div>
-        </div>
 
-        <button className="btn-primary" style={{ alignSelf: 'flex-end', padding: '12px 30px' }}>Save Changes</button>
+            <button type="submit" className="btn-primary" style={{ alignSelf: 'flex-end', padding: '12px 30px', fontWeight: 600 }}>Save Changes</button>
+        </form>
+    );
+};
+
+const SettingsInputField = ({ label, value, onChange, type = "text", disabled = false }) => (
+    <div>
+        <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: '#64748b', marginBottom: '8px' }}>{label}</label>
+        <input
+            type={type}
+            value={value || ''}
+            onChange={onChange}
+            disabled={disabled}
+            style={{ width: '100%', padding: '10px 15px', borderRadius: '10px', border: '1px solid #e2e8f0', background: disabled ? '#f8fafc' : 'white', fontSize: '14px' }}
+        />
     </div>
 );
 
@@ -195,7 +288,7 @@ const RbacSettings = () => (
                 <h3 style={{ margin: 0 }}>System Roles</h3>
                 <button className="btn-primary btn-sm"><Plus size={16} /> Create Role</button>
             </div>
-            <div className="roles-table-container">
+            <div className="table-responsive">
                 <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
                     <thead>
                         <tr style={{ borderBottom: '2px solid #f1f5f9' }}>

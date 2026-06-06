@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { apiClient } from '../services/apiClient';
 import {
     Users, UserPlus, Building, Clock, Calendar, DollarSign,
     ClipboardCheck, FileText, LayoutDashboard, History,
     TrendingUp, Plus, Search, MoreVertical, CheckCircle,
     AlertCircle, Briefcase, GraduationCap, MapPin, Phone, Mail,
-    Download, Filter, ChevronRight, PieChart as PieChartIcon
+    Download, Filter, ChevronRight, PieChart as PieChartIcon, Edit, Trash2
 } from 'lucide-react';
 import {
     AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
@@ -85,15 +86,163 @@ const HRStaff = () => {
     const [view, setView] = useState('dashboard'); // dashboard, employees, departments, attendance, leave, payroll, performance
     const [userRole, setUserRole] = useState('HR Manager'); // Admin, HR Manager, Staff
     const [showAddEmployee, setShowAddEmployee] = useState(false);
+    const [employees, setEmployees] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+    const [editEmployeeData, setEditEmployeeData] = useState(null);
+
+    const loadEmployees = async () => {
+        setLoading(true);
+        try {
+            const data = await apiClient.hr.listEmployees();
+            setEmployees(data);
+            setError(null);
+        } catch (err) {
+            console.error("Failed to load employees:", err);
+            setError("Failed to load employees from database.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        loadEmployees();
+    }, []);
+
+    // Calculate dynamic stats
+    const totalCount = employees.length;
+    const activeCount = employees.filter(e => e.status === 'active' || e.status === 'Active' || !e.status).length;
+    const leaveCount = employees.filter(e => e.status === 'leave' || e.status === 'On Leave').length;
+    const dynamicHRStats = {
+        totalEmployees: totalCount || hrStats.totalEmployees,
+        activeEmployees: activeCount || hrStats.activeEmployees,
+        onLeave: leaveCount || hrStats.onLeave,
+        newHiresMonth: employees.filter(e => e.date_joining && e.date_joining.includes('2026')).length || hrStats.newHiresMonth,
+        totalDepartments: 6,
+        pendingLeaves: 5,
+        payrollProcessed: '95%',
+        avgAttendance: '92%'
+    };
+
+    // Calculate department distribution
+    const deptCounts = {};
+    employees.forEach(e => {
+        const dept = e.department || 'General';
+        deptCounts[dept] = (deptCounts[dept] || 0) + 1;
+    });
+    const dynamicDeptDistribution = Object.keys(deptCounts).map((name, i) => ({
+        name,
+        value: deptCounts[name],
+        color: ['#6366f1', '#10b981', '#f59e0b', '#3b82f6', '#8b5cf6', '#f43f5e'][i % 6]
+    }));
+    const finalDeptDistribution = dynamicDeptDistribution.length > 0 ? dynamicDeptDistribution : departmentDistribution;
+
+    const handleCreateEmployee = async (employeeFormData) => {
+        setLoading(true);
+        try {
+            if (editEmployeeData) {
+                // Update mode
+                const empUpdatePayload = {
+                    first_name: employeeFormData.name.split(' ')[0] || '',
+                    last_name: employeeFormData.name.split(' ').slice(1).join(' ') || '',
+                    gender: employeeFormData.gender || 'Male',
+                    date_of_birth: employeeFormData.date_of_birth || null,
+                    national_id: employeeFormData.national_id || '',
+                    email: employeeFormData.email || '',
+                    cell_phone: employeeFormData.cell_phone || '',
+                    address: employeeFormData.address || '',
+                    designation: employeeFormData.designation || '',
+                    department: employeeFormData.department || '',
+                    employment_type: employeeFormData.employment_type || 'full_time',
+                    status: employeeFormData.status || 'active'
+                };
+                const updated = await apiClient.hr.updateEmployee(editEmployeeData.id, empUpdatePayload);
+                setEmployees(prev => prev.map(e => e.id === editEmployeeData.id ? updated : e));
+            } else {
+                // Generate username from full name
+                const username = employeeFormData.name.toLowerCase().replace(/[^a-z0-9]/g, '') + Math.floor(Math.random() * 1000);
+                
+                // Create User first
+                const userPayload = {
+                    username,
+                    email: employeeFormData.email,
+                    first_name: employeeFormData.name.split(' ')[0] || '',
+                    last_name: employeeFormData.name.split(' ').slice(1).join(' ') || '',
+                    password: 'TemporaryPass123!',
+                    link_to_hr: true
+                };
+                
+                const userResponse = await apiClient.post('/api/v1/accounts/users/', userPayload);
+                
+                // Fetch and find the newly created employee to update other details
+                const allEmployees = await apiClient.hr.listEmployees();
+                const createdEmp = allEmployees.find(emp => emp.user === userResponse.id);
+                
+                if (createdEmp) {
+                    const empUpdatePayload = {
+                        first_name: userPayload.first_name,
+                        last_name: userPayload.last_name,
+                        gender: employeeFormData.gender || 'Male',
+                        date_of_birth: employeeFormData.date_of_birth || null,
+                        national_id: employeeFormData.national_id || '',
+                        email: employeeFormData.email || '',
+                        cell_phone: employeeFormData.cell_phone || '',
+                        address: employeeFormData.address || '',
+                        designation: employeeFormData.designation || '',
+                        department: employeeFormData.department || '',
+                        employment_type: employeeFormData.employment_type || 'full_time',
+                        status: 'active'
+                    };
+                    const finalEmp = await apiClient.hr.updateEmployee(createdEmp.id, empUpdatePayload);
+                    setEmployees(prev => [...prev, finalEmp]);
+                } else {
+                    await loadEmployees();
+                }
+            }
+            setShowAddEmployee(false);
+            setEditEmployeeData(null);
+            setError(null);
+        } catch (err) {
+            console.error("Failed to save employee:", err);
+            setError(err.message || "Failed to save employee profile.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleDeleteEmployee = async (id) => {
+        if (!window.confirm("Are you sure you want to delete this employee?")) return;
+        setLoading(true);
+        try {
+            await apiClient.hr.deleteEmployee(id);
+            setEmployees(prev => prev.filter(e => e.id !== id));
+            setError(null);
+        } catch (err) {
+            console.error("Failed to delete employee:", err);
+            setError("Failed to delete employee record.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleEditEmployeeClick = (emp) => {
+        setEditEmployeeData(emp);
+        setShowAddEmployee(true);
+    };
+
+    const handleAddNewClick = () => {
+        setEditEmployeeData(null);
+        setShowAddEmployee(true);
+    };
 
     const renderDashboard = () => (
         <div className="hr-dashboard animations-fade-in">
             {/* Stats Grid */}
             <div className="hr-stats-grid" style={{ gap: '20px', marginBottom: '25px' }}>
-                <HRStatCard title="Total Employees" value={hrStats.totalEmployees} trend="+3 this month" icon={<Users size={20} />} color="#6366f1" />
-                <HRStatCard title="On Leave" value={hrStats.onLeave} trend="2 pending approval" icon={<Calendar size={20} />} color="#f59e0b" />
-                <HRStatCard title="Attendance" value={hrStats.avgAttendance} trend="Stable" icon={<Clock size={20} />} color="#10b981" />
-                <HRStatCard title="Payroll Status" value={hrStats.payrollProcessed} trend="Calculated" icon={<DollarSign size={20} />} color="#6366f1" />
+                <HRStatCard title="Total Employees" value={dynamicHRStats.totalEmployees} trend="+3 this month" icon={<Users size={20} />} color="#6366f1" />
+                <HRStatCard title="On Leave" value={dynamicHRStats.onLeave} trend="2 pending approval" icon={<Calendar size={20} />} color="#f59e0b" />
+                <HRStatCard title="Attendance" value={dynamicHRStats.avgAttendance} trend="Stable" icon={<Clock size={20} />} color="#10b981" />
+                <HRStatCard title="Payroll Status" value={dynamicHRStats.payrollProcessed} trend="Calculated" icon={<DollarSign size={20} />} color="#6366f1" />
             </div>
 
             <div className="hr-charts-grid" style={{ gap: '25px', marginBottom: '25px' }}>
@@ -314,8 +463,18 @@ const HRStaff = () => {
 
             {view === 'employees' && (
                 showAddEmployee ?
-                    <AddEmployeeSection onCancel={() => setShowAddEmployee(false)} /> :
-                    <EmployeeListSection employees={employeesData} onAddNew={() => setShowAddEmployee(true)} userRole={userRole} />
+                    <AddEmployeeSection 
+                        onCancel={() => { setShowAddEmployee(false); setEditEmployeeData(null); }} 
+                        onSave={handleCreateEmployee}
+                        editData={editEmployeeData}
+                    /> :
+                    <EmployeeListSection 
+                        employees={employees} 
+                        onAddNew={handleAddNewClick} 
+                        onEdit={handleEditEmployeeClick}
+                        onDelete={handleDeleteEmployee}
+                        userRole={userRole} 
+                    />
             )}
 
             {view === 'departments' && (
@@ -376,13 +535,17 @@ const HRNavBtn = ({ icon, label, active, onClick, className }) => (
     </button>
 );
 
-const EmployeeListSection = ({ employees, onAddNew, userRole }) => {
+const EmployeeListSection = ({ employees, onAddNew, onEdit, onDelete, userRole }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [deptFilter, setDeptFilter] = useState('All');
 
     const filtered = employees.filter(emp => {
-        const matchesSearch = emp.name.toLowerCase().includes(searchTerm.toLowerCase()) || emp.id.toLowerCase().includes(searchTerm.toLowerCase());
-        const matchesDept = deptFilter === 'All' || emp.dept === deptFilter;
+        const name = (emp.full_name || emp.name || `${emp.first_name || ''} ${emp.last_name || ''}`.trim() || 'Employee').toLowerCase();
+        const id = String(emp.id || '').toLowerCase();
+        const dept = (emp.department || emp.dept || '').toLowerCase();
+        
+        const matchesSearch = name.includes(searchTerm.toLowerCase()) || id.includes(searchTerm.toLowerCase());
+        const matchesDept = deptFilter === 'All' || deptFilter === 'All Departments' || dept === deptFilter.toLowerCase();
         return matchesSearch && matchesDept;
     });
 
@@ -421,7 +584,7 @@ const EmployeeListSection = ({ employees, onAddNew, userRole }) => {
                 </div>
             </div>
 
-            <div style={{ overflowX: 'auto' }}>
+            <div className="table-responsive">
                 <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
                     <thead>
                         <tr style={{ borderBottom: '2px solid #f1f5f9' }}>
@@ -439,31 +602,48 @@ const EmployeeListSection = ({ employees, onAddNew, userRole }) => {
                                 <td style={{ padding: '15px' }}>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                                         <div style={{ width: '38px', height: '38px', borderRadius: '50%', background: '#f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#6366f1', fontWeight: 700, fontSize: '12px' }}>
-                                            {emp.name.split(' ').map(n => n[0]).join('')}
+                                            {(emp.full_name || emp.name || `${emp.first_name || ''} ${emp.last_name || ''}`.trim() || 'EMP').split(' ').map(n => n[0]).join('')}
                                         </div>
                                         <div>
-                                            <div style={{ fontWeight: 600, fontSize: '14px' }}>{emp.name}</div>
+                                            <div style={{ fontWeight: 600, fontSize: '14px' }}>{emp.full_name || emp.name || `${emp.first_name || ''} ${emp.last_name || ''}`.trim() || 'Employee'}</div>
                                             <div style={{ fontSize: '11px', color: '#94a3b8' }}>{emp.id}</div>
                                         </div>
                                     </div>
                                 </td>
                                 <td style={{ padding: '15px' }}>
-                                    <div style={{ fontSize: '14px', fontWeight: 500 }}>{emp.role}</div>
-                                    <div style={{ fontSize: '12px', color: '#64748b' }}>{emp.dept}</div>
+                                    <div style={{ fontSize: '14px', fontWeight: 500 }}>{emp.designation || emp.role}</div>
+                                    <div style={{ fontSize: '12px', color: '#64748b' }}>{emp.department || emp.dept}</div>
                                 </td>
-                                <td style={{ padding: '15px', fontSize: '14px', color: '#64748b' }}>{emp.email}</td>
-                                <td style={{ padding: '15px', fontSize: '14px', color: '#64748b' }}>{emp.joinDate}</td>
+                                <td style={{ padding: '15px', fontSize: '14px', color: '#64748b' }}>{emp.email || emp.email_address}</td>
+                                <td style={{ padding: '15px', fontSize: '14px', color: '#64748b' }}>{emp.date_joining || emp.joinDate}</td>
                                 <td style={{ padding: '15px' }}>
                                     <span style={{
                                         padding: '4px 12px', borderRadius: '20px', fontSize: '11px', fontWeight: 700,
-                                        background: emp.status === 'Active' ? '#ecfdf5' : '#fef2f2',
-                                        color: emp.status === 'Active' ? '#10b981' : '#ef4444'
-                                    }}>{emp.status}</span>
+                                        background: (emp.status === 'Active' || emp.status === 'active') ? '#ecfdf5' : '#fef2f2',
+                                        color: (emp.status === 'Active' || emp.status === 'active') ? '#10b981' : '#ef4444'
+                                    }}>{emp.status || 'active'}</span>
                                 </td>
                                 <td style={{ padding: '15px' }}>
                                     <div style={{ display: 'flex', gap: '8px' }}>
+                                        {(userRole === 'Admin' || userRole === 'HR Manager') && (
+                                            <>
+                                                <button 
+                                                    title="Edit Employee" 
+                                                    onClick={() => onEdit(emp)}
+                                                    style={{ background: '#ecfdf5', border: 'none', padding: '6px', borderRadius: '6px', cursor: 'pointer', color: '#10b981' }}
+                                                >
+                                                    <Edit size={16} />
+                                                </button>
+                                                <button 
+                                                    title="Delete Employee" 
+                                                    onClick={() => onDelete(emp.id)}
+                                                    style={{ background: '#fef2f2', border: 'none', padding: '6px', borderRadius: '6px', cursor: 'pointer', color: '#ef4444' }}
+                                                >
+                                                    <Trash2 size={16} />
+                                                </button>
+                                            </>
+                                        )}
                                         <button title="View Profile" style={{ background: '#f8fafc', border: 'none', padding: '6px', borderRadius: '6px', cursor: 'pointer', color: '#64748b' }}><Search size={16} /></button>
-                                        <button title="More Options" style={{ background: '#f8fafc', border: 'none', padding: '6px', borderRadius: '6px', cursor: 'pointer', color: '#64748b' }}><MoreVertical size={16} /></button>
                                     </div>
                                 </td>
                             </tr>
@@ -475,14 +655,45 @@ const EmployeeListSection = ({ employees, onAddNew, userRole }) => {
     );
 };
 
-const AddEmployeeSection = ({ onCancel }) => {
+const AddEmployeeSection = ({ onCancel, onSave, editData }) => {
+    const [name, setName] = useState(editData ? (editData.full_name || `${editData.first_name || ''} ${editData.last_name || ''}`.trim()) : '');
+    const [gender, setGender] = useState(editData?.gender || 'Male');
+    const [dob, setDob] = useState(editData?.date_of_birth || '');
+    const [nationalId, setNationalId] = useState(editData?.national_id || '');
+    const [email, setEmail] = useState(editData?.email || editData?.email_address || '');
+    const [phone, setPhone] = useState(editData?.cell_phone || '');
+    const [address, setAddress] = useState(editData?.address || '');
+    const [dept, setDept] = useState(editData?.department || editData?.dept || 'Management');
+    const [designation, setDesignation] = useState(editData?.designation || editData?.role || '');
+    const [empType, setEmpType] = useState(editData?.employment_type || 'full_time');
+    const [dateJoining, setDateJoining] = useState(editData?.date_joining || editData?.joinDate || '');
+    const [status, setStatus] = useState(editData?.status || 'active');
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        onSave({
+            name,
+            gender,
+            date_of_birth: dob || null,
+            national_id: nationalId,
+            email,
+            cell_phone: phone,
+            address,
+            department: dept,
+            designation,
+            employment_type: empType,
+            date_joining: dateJoining || null,
+            status
+        });
+    };
+
     return (
-        <div className="portal-content-card animations-fade-in" style={{ padding: '30px' }}>
+        <form onSubmit={handleSubmit} className="portal-content-card animations-fade-in" style={{ padding: '30px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
-                <h3 style={{ margin: 0 }}>Add New Employee</h3>
+                <h3 style={{ margin: 0 }}>{editData ? 'Edit Employee Profile' : 'Add New Employee'}</h3>
                 <div style={{ display: 'flex', gap: '10px' }}>
-                    <button onClick={onCancel} style={{ padding: '10px 20px', borderRadius: '10px', border: '1px solid #e2e8f0', background: 'white', fontWeight: 600, cursor: 'pointer' }}>Cancel</button>
-                    <button className="btn-primary" style={{ padding: '10px 25px', borderRadius: '10px', fontWeight: 600 }}>Save Employee</button>
+                    <button type="button" onClick={onCancel} style={{ padding: '10px 20px', borderRadius: '10px', border: '1px solid #e2e8f0', background: 'white', fontWeight: 600, cursor: 'pointer' }}>Cancel</button>
+                    <button type="submit" className="btn-primary" style={{ padding: '10px 25px', borderRadius: '10px', fontWeight: 600 }}>Save Employee</button>
                 </div>
             </div>
 
@@ -491,20 +702,20 @@ const AddEmployeeSection = ({ onCancel }) => {
                     <div className="card-section">
                         <h4 style={{ margin: '0 0 15px 0', fontSize: '15px', color: '#6366f1' }}>Basic Information</h4>
                         <div className="form-grid-responsive" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
-                            <HRInputField label="Full Name" placeholder="e.g. Michael Jordan" />
-                            <HRSelectField label="Gender" options={['Male', 'Female', 'Other']} />
-                            <HRInputField label="Date of Birth" type="date" />
-                            <HRInputField label="National ID / Passport" placeholder="ID Number" />
+                            <HRInputField label="Full Name" placeholder="e.g. Michael Jordan" value={name} onChange={e => setName(e.target.value)} />
+                            <HRSelectField label="Gender" options={['Male', 'Female', 'Other']} value={gender} onChange={e => setGender(e.target.value)} />
+                            <HRInputField label="Date of Birth" type="date" value={dob} onChange={e => setDob(e.target.value)} />
+                            <HRInputField label="National ID / Passport" placeholder="ID Number" value={nationalId} onChange={e => setNationalId(e.target.value)} />
                         </div>
                     </div>
 
                     <div className="card-section">
                         <h4 style={{ margin: '0 0 15px 0', fontSize: '15px', color: '#6366f1' }}>Contact Information</h4>
                         <div className="form-grid-responsive" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
-                            <HRInputField label="Email Address" type="email" placeholder="email@company.com" />
-                            <HRInputField label="Phone Number" placeholder="+123 456 789" />
+                            <HRInputField label="Email Address" type="email" placeholder="email@company.com" value={email} onChange={e => setEmail(e.target.value)} />
+                            <HRInputField label="Phone Number" placeholder="+123 456 789" value={phone} onChange={e => setPhone(e.target.value)} />
                             <div style={{ gridColumn: 'span 2' }}>
-                                <HRInputField label="Residential Address" placeholder="Street, City, Country" />
+                                <HRInputField label="Residential Address" placeholder="Street, City, Country" value={address} onChange={e => setAddress(e.target.value)} />
                             </div>
                         </div>
                     </div>
@@ -512,11 +723,11 @@ const AddEmployeeSection = ({ onCancel }) => {
                     <div className="card-section">
                         <h4 style={{ margin: '0 0 15px 0', fontSize: '15px', color: '#6366f1' }}>Employment Details</h4>
                         <div className="form-grid-responsive" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
-                            <HRSelectField label="Department" options={['Management', 'Finance', 'Sales', 'Support', 'Development', 'Marketing']} />
-                            <HRInputField label="Job Title" placeholder="e.g. Senior Manager" />
-                            <HRSelectField label="Employment Type" options={['Full-time', 'Part-time', 'Contract']} />
-                            <HRInputField label="Date of Joining" type="date" />
-                            <HRSelectField label="Supervisor" options={['Jane Smith', 'Alice Cooper', 'Michael Chen']} />
+                            <HRSelectField label="Department" options={['Management', 'Finance', 'Sales', 'Support', 'Development', 'Marketing']} value={dept} onChange={e => setDept(e.target.value)} />
+                            <HRInputField label="Job Title" placeholder="e.g. Senior Manager" value={designation} onChange={e => setDesignation(e.target.value)} />
+                            <HRSelectField label="Employment Type" options={[{value: 'full_time', label: 'Full-Time'}, {value: 'part_time', label: 'Part-Time'}, {value: 'contract', label: 'Contract'}, {value: 'casual', label: 'Casual'}]} value={empType} onChange={e => setEmpType(e.target.value)} />
+                            <HRInputField label="Date of Joining" type="date" value={dateJoining} onChange={e => setDateJoining(e.target.value)} />
+                            <HRSelectField label="Status" options={[{value: 'active', label: 'Active'}, {value: 'inactive', label: 'Inactive'}]} value={status} onChange={e => setStatus(e.target.value)} />
                         </div>
                     </div>
                 </div>
@@ -526,7 +737,7 @@ const AddEmployeeSection = ({ onCancel }) => {
                         <div style={{ width: '100px', height: '100px', borderRadius: '50%', background: '#e2e8f0', margin: '0 auto 15px auto', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                             <Users size={40} color="#94a3b8" />
                         </div>
-                        <button style={{ background: '#6366f1', color: 'white', border: 'none', padding: '8px 15px', borderRadius: '8px', fontSize: '12px', fontWeight: 600, cursor: 'pointer' }}>Upload Photo</button>
+                        <button type="button" style={{ background: '#6366f1', color: 'white', border: 'none', padding: '8px 15px', borderRadius: '8px', fontSize: '12px', fontWeight: 600, cursor: 'pointer' }}>Upload Photo</button>
                     </div>
 
                     <div className="card-section">
@@ -540,22 +751,36 @@ const AddEmployeeSection = ({ onCancel }) => {
                     </div>
                 </div>
             </div>
-        </div>
+        </form>
     );
 };
 
-const HRInputField = ({ label, placeholder, type = "text" }) => (
+const HRInputField = ({ label, placeholder, type = "text", value, onChange }) => (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
         <label style={{ fontSize: '13px', fontWeight: 600, color: '#475569' }}>{label}</label>
-        <input type={type} placeholder={placeholder} style={{ padding: '10px', borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '14px' }} />
+        <input 
+            type={type} 
+            placeholder={placeholder} 
+            value={value || ''} 
+            onChange={onChange} 
+            style={{ padding: '10px', borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '14px', background: 'white' }} 
+        />
     </div>
 );
 
-const HRSelectField = ({ label, options }) => (
+const HRSelectField = ({ label, options, value, onChange }) => (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
         <label style={{ fontSize: '13px', fontWeight: 600, color: '#475569' }}>{label}</label>
-        <select style={{ padding: '10px', borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '14px', background: 'white' }}>
-            {options.map((opt, i) => <option key={i}>{opt}</option>)}
+        <select 
+            value={value} 
+            onChange={onChange} 
+            style={{ padding: '10px', borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '14px', background: 'white' }}
+        >
+            {options.map((opt, i) => {
+                const val = typeof opt === 'object' ? opt.value : opt;
+                const lbl = typeof opt === 'object' ? opt.label : opt;
+                return <option key={i} value={val}>{lbl}</option>;
+            })}
         </select>
     </div>
 );
@@ -590,7 +815,7 @@ const AttendanceManagementSection = ({ attendance, userRole }) => {
                 </div>
             </div>
 
-            <div style={{ overflowX: 'auto' }}>
+            <div className="table-responsive">
                 <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
                     <thead>
                         <tr style={{ borderBottom: '2px solid #f1f5f9' }}>
@@ -636,7 +861,7 @@ const LeaveManagementSection = ({ userRole }) => {
                     <h3 style={{ margin: 0 }}>Leave Requests</h3>
                     <button className="btn-primary" style={{ padding: '8px 15px', borderRadius: '8px', fontSize: '13px' }}>Apply for Leave</button>
                 </div>
-                <div style={{ overflowX: 'auto' }}>
+                <div className="table-responsive">
                     <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                         <thead>
                             <tr style={{ borderBottom: '2px solid #f1f5f9' }}>
@@ -729,7 +954,7 @@ const PayrollManagementSection = () => {
                 </div>
             </div>
 
-            <div style={{ overflowX: 'auto' }}>
+            <div className="table-responsive">
                 <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                     <thead>
                         <tr style={{ borderBottom: '2px solid #f1f5f9', textAlign: 'left' }}>
@@ -837,7 +1062,7 @@ const DocumentsManagementSection = () => {
                     <Plus size={18} /> Upload Document
                 </button>
             </div>
-            <div style={{ overflowX: 'auto' }}>
+            <div className="table-responsive">
                 <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                     <thead>
                         <tr style={{ borderBottom: '2px solid #f1f5f9', textAlign: 'left' }}>
