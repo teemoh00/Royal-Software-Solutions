@@ -131,50 +131,138 @@ const ProductsServices = () => {
                             We design and develop tailored software systems for businesses and institutions across industries.
                         </p>
                     </div>
-                    <div className="corporate-services-grid">
-                        <div className="corporate-card">
-                            <div className="corporate-icon-wrapper">
-                                <Database size={32} className="corporate-icon text-primary" />
-                            </div>
-                            <h3>ERP Systems</h3>
-                            <p>For All Industries</p>
-                        </div>
-                        <div className="corporate-card">
-                            <div className="corporate-icon-wrapper">
-                                <Activity size={32} className="corporate-icon text-primary" />
-                            </div>
-                            <h3>Point of Sale (POS)</h3>
-                            <p>Retail & Wholesale Systems</p>
-                        </div>
-                        <div className="corporate-card">
-                            <div className="corporate-icon-wrapper">
-                                <Server size={32} className="corporate-icon text-primary" />
-                            </div>
-                            <h3>Inventory Management</h3>
-                            <p>Stock & Supply Chain</p>
-                        </div>
-                        <div className="corporate-card">
-                            <div className="corporate-icon-wrapper">
-                                <BarChart size={32} className="corporate-icon text-primary" />
-                            </div>
-                            <h3>Financial & Accounting</h3>
-                            <p>Core Finance Systems</p>
-                        </div>
-                        <div className="corporate-card">
-                            <div className="corporate-icon-wrapper">
-                                <Globe size={32} className="corporate-icon text-primary" />
-                            </div>
-                            <h3>Web & Mobile Apps</h3>
-                            <p>iOS, Android & Hybrid</p>
-                        </div>
-                        <div className="corporate-card">
-                            <div className="corporate-icon-wrapper">
-                                <Users size={32} className="corporate-icon text-primary" />
-                            </div>
-                            <h3>CRM Systems</h3>
-                            <p>Customer Relationship Management</p>
-                        </div>
-                    </div>
+          <style>{`
+            .bento-grid {
+              display: grid;
+              grid-template-columns: repeat(3, 1fr);
+              gap: 1.5rem;
+              margin-top: 3.5rem;
+            }
+            .bento-col-2 { grid-column: span 2; }
+            .bento-col-1 { grid-column: span 1; }
+            
+            .bento-item {
+              background: white;
+              border-radius: 24px;
+              padding: 2.5rem;
+              position: relative;
+              overflow: hidden;
+              border: 1px solid #e2e8f0;
+              box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+              transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+              display: flex;
+              flex-direction: column;
+              justify-content: flex-start;
+              z-index: 1;
+              text-decoration: none;
+            }
+            .bento-item:hover {
+              transform: translateY(-8px);
+              box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
+              border-color: var(--module-color);
+            }
+            .bento-bg-glow {
+              position: absolute;
+              top: -50%;
+              right: -50%;
+              width: 200%;
+              height: 200%;
+              background: radial-gradient(circle at center, var(--module-color-light) 0%, transparent 50%);
+              opacity: 0;
+              transition: opacity 0.5s ease;
+              z-index: -1;
+              pointer-events: none;
+            }
+            .bento-item:hover .bento-bg-glow { opacity: 1; }
+            .bento-icon-wrapper {
+              display: inline-flex;
+              align-items: center;
+              justify-content: center;
+              width: 64px;
+              height: 64px;
+              border-radius: 18px;
+              background: #f8fafc;
+              color: var(--module-color);
+              margin-bottom: 2rem;
+              transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+            .bento-item:hover .bento-icon-wrapper {
+              transform: scale(1.1) rotate(5deg);
+              background: var(--module-color);
+              color: white;
+              box-shadow: 0 15px 20px -5px var(--module-color-shadow);
+            }
+            .bento-title { font-size: 1.4rem; font-weight: 800; color: #1e293b; margin-bottom: 1rem; }
+            .bento-desc { color: #64748b; font-size: 1.05rem; line-height: 1.6; }
+            
+            @media (max-width: 992px) { .bento-grid { grid-template-columns: repeat(2, 1fr); } .bento-col-2 { grid-column: span 2; } .bento-col-1 { grid-column: span 1; } }
+            @media (max-width: 768px) { .bento-grid { grid-template-columns: 1fr; } .bento-col-2, .bento-col-1 { grid-column: span 1; } }
+          `}</style>
+
+          <div className="corporate-services-grid bento-grid">
+            {[
+              {
+                title: "ERP Systems",
+                desc: "For All Industries",
+                icon: <Database size={28} />,
+                color: "#10b981", colorLight: "rgba(16,185,129,0.1)", colorShadow: "rgba(16,185,129,0.3)",
+                span: "bento-col-2"
+              },
+              {
+                title: "Point of Sale (POS)",
+                desc: "Retail & Wholesale Systems",
+                icon: <Activity size={28} />,
+                color: "#3b82f6", colorLight: "rgba(59,130,246,0.1)", colorShadow: "rgba(59,130,246,0.3)",
+                span: "bento-col-1"
+              },
+              {
+                title: "Inventory Management",
+                desc: "Stock & Supply Chain",
+                icon: <Server size={28} />,
+                color: "#ec4899", colorLight: "rgba(236,72,153,0.1)", colorShadow: "rgba(236,72,153,0.3)",
+                span: "bento-col-1"
+              },
+              {
+                title: "Financial & Accounting",
+                desc: "Core Finance Systems",
+                icon: <BarChart size={28} />,
+                color: "#8b5cf6", colorLight: "rgba(139,92,246,0.1)", colorShadow: "rgba(139,92,246,0.3)",
+                span: "bento-col-2"
+              },
+              {
+                title: "Web & Mobile Apps",
+                desc: "iOS, Android & Hybrid",
+                icon: <Globe size={28} />,
+                color: "#14b8a6", colorLight: "rgba(20,184,166,0.1)", colorShadow: "rgba(20,184,166,0.3)",
+                span: "bento-col-2"
+              },
+              {
+                title: "CRM Systems",
+                desc: "Customer Relationship Management",
+                icon: <Users size={28} />,
+                color: "#C89B2A", colorLight: "rgba(200,155,42,0.1)", colorShadow: "rgba(200,155,42,0.3)",
+                span: "bento-col-1"
+              }
+            ].map((mod, i) => (
+              <div 
+                key={i} 
+                className={`corporate-card bento-item animations-fade-in ${mod.span}`} 
+                style={{ 
+                  animationDelay: `${i * 0.1}s`,
+                  '--module-color': mod.color,
+                  '--module-color-light': mod.colorLight,
+                  '--module-color-shadow': mod.colorShadow
+                }}
+              >
+                <div className="bento-bg-glow"></div>
+                <div className="bento-icon-wrapper">
+                  {mod.icon}
+                </div>
+                <h3 className="bento-title">{mod.title}</h3>
+                <p className="bento-desc">{mod.desc}</p>
+              </div>
+            ))}
+          </div>
                     <div className="section-cta text-center mt-5">
                         <Link to="/get-quote" className="btn btn-primary">Discuss Your Project</Link>
                     </div>
@@ -395,56 +483,72 @@ const ProductsServices = () => {
                             Delivering specialized technological solutions across multiple sectors.
                         </p>
                     </div>
-                    <div className="corporate-industries-grid">
-                        <div className="corporate-industry-card animate-fade-in-up delay-100">
-                            <div className="corporate-industry-icon-wrapper">
-                                <BookOpen className="corporate-industry-icon" />
-                            </div>
-                            <span>Education</span>
-                        </div>
-                        <div className="corporate-industry-card animate-fade-in-up delay-200">
-                            <div className="corporate-industry-icon-wrapper">
-                                <Users className="corporate-industry-icon" />
-                            </div>
-                            <span>Retail & Commerce</span>
-                        </div>
-                        <div className="corporate-industry-card animate-fade-in-up delay-300">
-                            <div className="corporate-industry-icon-wrapper">
-                                <Activity className="corporate-industry-icon" />
-                            </div>
-                            <span>Healthcare</span>
-                        </div>
-                        <div className="corporate-industry-card animate-fade-in-up delay-100">
-                            <div className="corporate-industry-icon-wrapper">
-                                <Cpu className="corporate-industry-icon" />
-                            </div>
-                            <span>Manufacturing</span>
-                        </div>
-                        <div className="corporate-industry-card animate-fade-in-up delay-200">
-                            <div className="corporate-industry-icon-wrapper">
-                                <Truck className="corporate-industry-icon" />
-                            </div>
-                            <span>Logistics</span>
-                        </div>
-                        <div className="corporate-industry-card animate-fade-in-up delay-300">
-                            <div className="corporate-industry-icon-wrapper">
-                                <Building className="corporate-industry-icon" />
-                            </div>
-                            <span>Construction</span>
-                        </div>
-                        <div className="corporate-industry-card animate-fade-in-up delay-100">
-                            <div className="corporate-industry-icon-wrapper">
-                                <Globe className="corporate-industry-icon" />
-                            </div>
-                            <span>NGOs</span>
-                        </div>
-                        <div className="corporate-industry-card animate-fade-in-up delay-200">
-                            <div className="corporate-industry-icon-wrapper">
-                                <Briefcase className="corporate-industry-icon" />
-                            </div>
-                            <span>Hospitality</span>
-                        </div>
-                    </div>
+          <style>{`
+            .premium-target-grid {
+              display: flex;
+              flex-wrap: wrap;
+              justify-content: center;
+              gap: 1.5rem;
+              margin-top: 3rem;
+            }
+            .premium-target-item {
+              background: white;
+              border: 1px solid #e2e8f0;
+              border-radius: 50px;
+              padding: 0.75rem 2rem 0.75rem 0.75rem;
+              display: flex;
+              align-items: center;
+              gap: 1rem;
+              box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+              transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+              cursor: default;
+            }
+            .premium-target-item:hover {
+              transform: translateY(-5px);
+              box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+              border-color: #C89B2A;
+            }
+            .premium-target-icon {
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              width: 48px;
+              height: 48px;
+              border-radius: 50%;
+              background: rgba(200, 155, 42, 0.1);
+              color: #C89B2A;
+              transition: all 0.3s ease;
+            }
+            .premium-target-item:hover .premium-target-icon {
+              background: #C89B2A;
+              color: white;
+            }
+            .premium-target-text {
+              font-weight: 600;
+              color: #1e293b;
+              font-size: 1.05rem;
+            }
+          `}</style>
+          
+          <div className="corporate-industries-grid premium-target-grid">
+            {[
+              { icon: <BookOpen size={24} />, text: "Education" },
+              { icon: <Users size={24} />, text: "Retail & Commerce" },
+              { icon: <Activity size={24} />, text: "Healthcare" },
+              { icon: <Cpu size={24} />, text: "Manufacturing" },
+              { icon: <Truck size={24} />, text: "Logistics" },
+              { icon: <Building size={24} />, text: "Construction" },
+              { icon: <Globe size={24} />, text: "NGOs" },
+              { icon: <Briefcase size={24} />, text: "Hospitality" }
+            ].map((item, i) => (
+              <div key={i} className="corporate-industry-card premium-target-item animations-fade-in" style={{ animationDelay: `${i * 0.1}s` }}>
+                <div className="premium-target-icon">
+                  {item.icon}
+                </div>
+                <span className="premium-target-text">{item.text}</span>
+              </div>
+            ))}
+          </div>
                 </div>
             </section>
 
