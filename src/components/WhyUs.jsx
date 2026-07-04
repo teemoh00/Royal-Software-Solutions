@@ -32,16 +32,19 @@ const WhyUs = () => {
                     <p className="section-subtitle">Four specific, Africa-native reasons. Not generic software selling points.</p>
                 </div>
 
-                <div className="why-us-grid">
-                    {reasons.map((reason, index) => (
-                        <div key={index} className="why-us-card">
-                            <div className="icon-wrapper default-color">
-                                {reason.icon}
+                <div className="bento-grid">
+                    {reasons.map((reason, index) => {
+                        const isLarge = index === 0 || index === 3;
+                        return (
+                            <div key={index} className={`bento-card ${isLarge ? 'bento-lg' : ''} ${index === 0 ? 'dark' : ''}`}>
+                                <div className="service-icon">
+                                    {reason.icon}
+                                </div>
+                                <h3>{reason.title}</h3>
+                                <p>{reason.description}</p>
                             </div>
-                            <h3>{reason.title}</h3>
-                            <p>{reason.description}</p>
-                        </div>
-                    ))}
+                        )
+                    })}
                 </div>
             </div>
         </section>

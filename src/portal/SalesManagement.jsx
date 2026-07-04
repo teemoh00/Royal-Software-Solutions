@@ -228,8 +228,6 @@ const SalesManagement = () => {
                 </div>
             </div>
 
-            </div>
-
             {/* View Content */}
             {view === 'dashboard' && <SalesDashboard stats={liveStats} />}
 

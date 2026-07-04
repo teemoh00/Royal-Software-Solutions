@@ -13,7 +13,7 @@ const Industries = () => {
     ]
 
     return (
-        <section className="section bg-neutral">
+        <section className="section industries">
             <div className="container">
                 <div className="section-header">
                     <h2 className="section-title">Industries We Serve</h2>
