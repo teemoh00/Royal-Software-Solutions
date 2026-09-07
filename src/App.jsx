@@ -12,6 +12,7 @@ import FahariAcademia from './components/FahariAcademia'
 import FahariLedger from './components/FahariLedger'
 import FahariNexus from './components/FahariNexus'
 import Footer from './components/Footer'
+import { NavProvider, useNav } from './context/NavContext'
 
 // Admin / Staff Portal
 import PortalLayout from './portal/PortalLayout'
@@ -36,6 +37,7 @@ import { useLocation } from 'react-router-dom'
 
 function AppContent() {
   const location = useLocation()
+  const { isMenuOpen } = useNav()
   const isAuthRoute = ['/login', '/register', '/admin/login'].some(path => location.pathname.includes(path))
   const isPortalRoute = location.pathname.startsWith('/portal')
   
@@ -93,7 +95,7 @@ function AppContent() {
           href="https://wa.me/254759437978?text=Hi%2C%20I%27d%20like%20to%20learn%20more%20about%20Fahari."
           target="_blank"
           rel="noopener noreferrer"
-          className="whatsapp-float"
+          className={`whatsapp-float${isMenuOpen ? ' menu-open' : ''}`}
           aria-label="Chat on WhatsApp"
         >
           <svg viewBox="0 0 448 512" width="24" height="24" fill="currentColor">
@@ -109,7 +111,9 @@ function AppContent() {
 function App() {
   return (
     <Router>
-      <AppContent />
+      <NavProvider>
+        <AppContent />
+      </NavProvider>
     </Router>
   )
 }

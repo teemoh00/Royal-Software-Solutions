@@ -6,8 +6,8 @@ const About = () => {
     return (
         <div id="about" className="about-page">
             <SEO 
-                title="About Us" 
-                description="Royal Software Solutions is a research-driven technology company building reliable, scalable, and sustainable software solutions for institutions and businesses across Africa."
+                title="Who We Are — Royal Software Solutions | Built for Africa" 
+                description="Royal Software Solutions is an East African technology company building scalable, institution-grade software for schools, businesses, SACCOs, and NGOs across Kenya and East Africa."
                 path="/about"
             />
 

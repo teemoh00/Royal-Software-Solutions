@@ -6,8 +6,8 @@ const Support = () => {
     return (
         <div className="support-page">
             <SEO 
-                title="Support" 
-                description="Get help with Royal Software Solutions. Contact our support team for assistance with Fahari products and custom software."
+                title="Help & Support — Royal Software Solutions" 
+                description="Get help with any Fahari product. Contact our support team via WhatsApp, email, or this form. Fast response guaranteed for all Fahari clients."
                 path="/support"
             />
             

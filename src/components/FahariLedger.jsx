@@ -7,8 +7,8 @@ const FahariLedger = () => {
   return (
     <div className="product-page">
       <SEO 
-        title="Fahari Ledger - SACCO & MFI Management" 
-        description="The SACCO & Microfinance management system built for Africa. Compliant with SASRA regulations."
+        title="Fahari Ledger — SACCO & Microfinance Software | SASRA Compliant" 
+        description="The SACCO and MFI management system built for East Africa. SASRA-compliant loan tracking, member management, dividends, and mobile banking. Built in Kenya."
         path="/fahari-ledger"
       />
 

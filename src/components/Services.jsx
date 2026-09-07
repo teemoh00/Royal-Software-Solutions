@@ -66,7 +66,8 @@ const Services = () => {
                     {services.map((service, index) => (
                         <div 
                             key={index} 
-                            className={`bento-card ${service.size} ${service.dark ? 'dark' : ''}`}
+                            className={`bento-card cinematic-fade-in ${service.size} ${service.dark ? 'dark' : ''}`}
+                            style={{ animationDelay: `${index * 0.15}s` }}
                         >
                             <div className="bento-card-top">
                                 <div className="service-icon">{service.icon}</div>

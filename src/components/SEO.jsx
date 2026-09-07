@@ -6,7 +6,7 @@ const SEO = ({ title, description, path = '' }) => {
 
   return (
     <Helmet>
-      <title>{title} | Royal Software Solutions</title>
+      <title>{`${title} | Royal Software Solutions`}</title>
       <meta name="description" content={description} />
       <link rel="canonical" href={fullUrl} />
       

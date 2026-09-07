@@ -25,7 +25,7 @@ const WhyUs = () => {
     ]
 
     return (
-        <section className="section why-us-section">
+        <section id="why-us" className="why-us-section soft-divider-top">
             <div className="container">
                 <div className="section-header">
                     <h2 className="section-title">Why Fahari?</h2>
@@ -36,7 +36,7 @@ const WhyUs = () => {
                     {reasons.map((reason, index) => {
                         const isLarge = index === 0 || index === 3;
                         return (
-                            <div key={index} className={`bento-card ${isLarge ? 'bento-lg' : ''} ${index === 0 ? 'dark' : ''}`}>
+                            <div key={index} className={`bento-card ${isLarge ? 'bento-lg' : ''} neomorphic-card`}>
                                 <div className="service-icon">
                                     {reason.icon}
                                 </div>

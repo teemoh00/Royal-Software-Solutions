@@ -1,0 +1,36 @@
+﻿# Royal Software Solutions — Fahari
+
+> Royal Software Solutions is a Nairobi-based enterprise software company
+> building the Fahari product suite: an integrated institutional operating
+> system for East African schools, businesses, SACCOs, and NGOs.
+> Products are cloud-based, M-Pesa integrated, and go live in 24 hours.
+
+Key facts:
+
+- Founded in Kenya; primary market is East Africa (Kenya, Uganda, Tanzania)
+- Core product suite: Fahari Academia (schools), Fahari Nexus (businesses), Fahari Ledger (SACCOs)
+- Compliance: CBC/KCSE/IGCSE curriculum aligned (Academia); SASRA compliant (Ledger)
+- Pricing: subscription-based, KES-denominated, M-Pesa billing supported
+- Contact: +254 759 437 978
+- WhatsApp: https://wa.me/254759437978
+- Demo requests: https://royalsoftwares.co.ke/get-quote
+
+## Products
+
+- [Fahari Academia](https://royalsoftwares.co.ke/fahari-academia): School management ERP for East African institutions. CBC/KCSE/IGCSE-aligned fee collection, report cards, HR, payroll, and parent portal. Go live in 24 hours.
+- [Fahari Nexus](https://royalsoftwares.co.ke/fahari-nexus): Business operations ERP for African SMEs and enterprises. Sales, inventory, procurement, finance, and HR — unified. M-Pesa integrated.
+- [Fahari Ledger](https://royalsoftwares.co.ke/fahari-ledger): SACCO and microfinance management system. SASRA-compliant loan tracking, member records, dividends, and mobile banking. Built for Kenya.
+
+## Company
+
+- [About Royal Software Solutions](https://royalsoftwares.co.ke/about): Company background, mission, team, and values. East African-founded, research-driven technology company.
+- [Products & Services Overview](https://royalsoftwares.co.ke/products-services): Full Fahari ecosystem overview with feature comparisons and industry coverage.
+- [Book a Free Demo](https://royalsoftwares.co.ke/get-quote): Request a personalized product demo. Response within 24 hours.
+
+## Support
+
+- [Help & Support](https://royalsoftwares.co.ke/support): Contact the Royal Software Solutions support team via WhatsApp, email, or web form.
+
+## Optional
+
+- [Home](https://royalsoftwares.co.ke/): Landing page with hero section, services overview, client testimonials, and industries served (education, healthcare, finance, NGOs).

@@ -7,34 +7,37 @@ const Hero = () => {
             id="home" 
             className="home-hero" 
         >
-            {/* Tech Mesh Overlay (handled in CSS via pseudo element) */}
-            <div className="hero-mesh-overlay"></div>
+            {/* Cinematic Volumetric Spotlight */}
+            <div className="hero-cinematic-spotlight"></div>
             
             <div className="container home-hero-container" style={{ position: 'relative', zIndex: 2 }}>
                 <div className="hero-content">
-                    <span className="hero-pre-headline">
+                    <span className="hero-pre-headline cinematic-fade-in" style={{ animationDelay: '0.2s' }}>
                         Built for East Africa. Built for here.
                     </span>
-                    <h1>The infrastructure of African excellence.</h1>
-                    <p className="hero-sub-headline">
+                    <h1 className="cinematic-fade-in" style={{ animationDelay: '0.4s' }}>The infrastructure of African excellence.</h1>
+                    <p className="hero-sub-headline cinematic-fade-in" style={{ animationDelay: '0.6s' }}>
                         Your school, your business, your SACCO — finally running with clarity.
-                        <br />
-                        <span className="highlight-points">M-Pesa integrated. CBC compliant. Live in 24 hours.</span>
                     </p>
-                    <div className="hero-buttons">
-                        <Link to="/get-quote" className="btn btn-primary">
+                    <div className="hero-highlights cinematic-fade-in" style={{ animationDelay: '0.8s' }}>
+                        <span className="highlight-tag"><CheckCircle size={14} /> M-Pesa integrated</span>
+                        <span className="highlight-tag"><CheckCircle size={14} /> CBC compliant</span>
+                        <span className="highlight-tag"><CheckCircle size={14} /> Live in 24 hours</span>
+                    </div>
+                    <div className="hero-buttons cinematic-fade-in" style={{ animationDelay: '1.0s' }}>
+                        <Link to="/get-quote" className="btn btn-primary btn-glow">
                             Get a Free Demo <ArrowRight size={18} />
                         </Link>
-                        <a href="#services" className="btn btn-outline">
+                        <a href="#services" className="btn btn-glass">
                             See How It Works <Play size={16} style={{ marginLeft: '8px' }} />
                         </a>
                     </div>
                 </div>
                 
-                <div className="hero-visual">
+                <div className="hero-visual cinematic-fade-in" style={{ animationDelay: '1.2s' }}>
                     <div className="hero-dashboard-split">
                         {/* Left Dashboard - Fahari Academia */}
-                        <div className="mockup-panel academia-panel">
+                        <div className="mockup-panel academia-panel cinematic-tilt">
                             <div className="panel-header">
                                 <div className="panel-dots">
                                     <span></span><span></span><span></span>
@@ -73,7 +76,7 @@ const Hero = () => {
                         </div>
 
                         {/* Right Dashboard - Fahari Nexus */}
-                        <div className="mockup-panel nexus-panel">
+                        <div className="mockup-panel nexus-panel cinematic-tilt">
                             <div className="panel-header">
                                 <div className="panel-dots">
                                     <span></span><span></span><span></span>
@@ -127,6 +130,9 @@ const Hero = () => {
                     </div>
                 </div>
             </div>
+
+            {/* Cinematic Fade Transition to next section */}
+            <div className="hero-transition-fade"></div>
         </section>
     )
 }

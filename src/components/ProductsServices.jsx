@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { ArrowRight, CheckCircle, Database, Server, Shield, Globe, Cpu, BarChart, Users, BookOpen, Truck, Building, Activity, Briefcase } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import SEO from './SEO'
 
 const erpFeatures = [
     {
@@ -50,6 +51,11 @@ const ProductsServices = () => {
 
     return (
         <div className="products-services-page">
+            <SEO
+                title="The Fahari Ecosystem — School, Business & SACCO Software"
+                description="Explore the full Fahari product suite — Fahari Academia for schools, Fahari Nexus for businesses, and Fahari Ledger for SACCOs. Built in Kenya. Live in 24 hours."
+                path="/products-services"
+            />
             {/* 1. Page Hero Section */}
             <section className="corporate-hero">
                 <div className="stars-container">
