@@ -132,7 +132,7 @@ const Hero = () => {
             </div>
 
             {/* Cinematic Fade Transition to next section */}
-            <div className="hero-transition-fade"></div>
+            {/*<div className="hero-transition-fade"></div>*/}
         </section>
     )
 }
